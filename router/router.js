@@ -3,7 +3,7 @@ import jobseekerRouter from './user/jobSeeker.js';
 const Router = express.Router();
 Router.route('/')
   .get(async (req, res) => {
-    res.status(200).end('<h1>Hello World!</h1><hr>')
+    res.send("<a href='auth/google'>Login with Google </a>");
   })
-Router.use('/jobseeker', jobseekerRouter)
+Router.use('/', jobseekerRouter)
 export default Router
