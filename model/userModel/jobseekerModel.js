@@ -1,54 +1,84 @@
 import Joi from 'joi'
-import {DB} from '../../config/mongoDB.js'
-
-// const jobseekerSchema = new mongoose.Schema({
-//   googleId: { type: String, required: true },
-//   userName: { type: String, required: true },
-//   email: { type: String, required: true, unique: true },
-//   avatar: { type: String },
-//   resume: { type: String }, // Ví dụ, thông tin bổ sung cho jobseeker
-//   // Các trường đặc biệt cho jobseeker
-// });
-// const Jobseeker = mongoose.model('Jobseeker', jobseekerSchema);
-
-// const USER_SIGNIN_COLLECTION_SCHEMA = Joi.object({
-//   email: Joi.string().email().required().min(3).max(50),
-//   password: Joi.string().min(7).required().trim().strict()
-
-// })
-// // const INVALID_DATA_UPDATE = ['_id', 'createdAt']
-// const validObjectValueSignUp = async (data) => {
-//   return await USER_SIGNUP_COLLECTION_SCHEMA.validateAsync(data, { abortEarly: false })
-// }
-// const validObjectValueSignIn = async (data) => {
-//   return await USER_SIGNIN_COLLECTION_SCHEMA.validateAsync(data, { abortEarly: false })
-// }
+import {client} from '../../config/mongoDB.js'
+const signUpSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).required(),
+  fullName: Joi.string().min(3).required(),
+  firstName: Joi.string().min(1).required(),
+  middleName: Joi.string(),
+  lastName: Joi.string().min(1).required(),
+  dateOfBirth: Joi.date().required(),
+  address: Joi.string().required(),
+  experience: Joi.string().required(),
+  certifications: Joi.array().items(Joi.string()).default([]),
+  skills: Joi.array().items(Joi.string()).default([]),
+  education: Joi.string().required(),
+});
+const signInSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).required(),
+});
 const getAllUsers = async () => {
  
 }
-const signUp = async (Data) => {
-}   
-const findOneById = async (id) => {
+const signUp = async (data) => {
   try {
-    const account = DB.collection("Job Seeker");
-    const user = await account.findOne({ID: id});
-    return user
+ const { error } = signUpSchema.validate(data);
+    if (error) {
+      throw new Error(error.details[0].message);
+    }
+    const existingUser = await client.db("Account").collection("Job Seeker").findOne({ email: data.email });
+    if (existingUser) {
+      throw new Error("User with this email already exists");
+    }
+    const newUser = {
+      email: data.email,
+      password: data.password,
+      fullName: data.fullName,
+      firstName: data.firstName,
+      middleName: data.middleName,
+      lastName: data.lastName,
+      dateOfBirth: data.dateOfBirth,
+      address: data.address,
+      experience: data.experience,
+      certifications: data.certifications,
+      skills: data.skills,
+      education: data.education,
+      createdAt: new Date(),
+    };
+    const result = await client.db("Account").collection("Job Seeker").insertOne(newUser);
+    return result.ops[0];
   } catch (error) {
-    throw new Error(error)
+    throw new Error(error.message || "Error during sign up");
   }
+};
+const signIn = async (data) => {
+  try {
+    const { error } = signInSchema.validate(data);
+    if (error) {
+      throw new Error(error.details[0].message);
+    }
+    const user = await client.db("Account").collection("Job Seeker").findOne({ email: data.email });
+    if (!user) {
+      throw new Error("Invalid email or password");
+    }
+    return user; 
+  } catch (error) {
+    throw new Error(error.message || "Error during sign in");
+  }
+};
+const findOneById = async (id) => {
 }
-const signIn = async (profile) => {
-  const account = DB.db("Account").collection("Job Seeker");
-  const result = await account.findOne({ userName: profile.emails[0].value  });
+const signInWithGoogle = async (profile) => {
+  const account = client.db("Account").collection("Job Seeker");
+  const result = await account.findOne({ googleId: profile.id });
   return result;
-}
-const getUser = async (cookie) => {
-  
 }
 export const jobseekerModel = {
   signUp,
+  signIn,
   getAllUsers,
   findOneById,
-  signIn,
-  getUser,
+  signInWithGoogle,
+
 }

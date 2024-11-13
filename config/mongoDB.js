@@ -3,7 +3,7 @@ import { MongoClient, ServerApiVersion } from 'mongodb';
 
 dotenv.config();
 
-const client = new MongoClient(process.env.MONGO_URI, {
+export const client = new MongoClient(process.env.MONGO_URI, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
@@ -21,4 +21,3 @@ export const connectDB = async () => {
   }
 };
 
-export const DB = client;  // Export trực tiếp client để sử dụng
