@@ -10,7 +10,6 @@ passport.use(new GoogleStrategy({
     passReqToCallback:true
   },
   async (request, accessToken, refreshToken, profile, done) => {
-    console.log('Google Profile:', profile);
     try {
       const user = await jobseekerModel.signInWithGoogle(profile);
       return done(null, user);

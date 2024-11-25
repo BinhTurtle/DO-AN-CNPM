@@ -26,7 +26,7 @@ const signUp = async (req, res, next) => {
   const googleAuthCallback = async (req, res) => {
     try {
         console.log('Request User:', req.user); 
-        res.send("Welcome " + req.user.Tên);
+        res.send("Welcome " + req.user.Name);
     } catch (error) {
         console.error('Error during Google auth callback:', error); 
         res.send('lỗi');

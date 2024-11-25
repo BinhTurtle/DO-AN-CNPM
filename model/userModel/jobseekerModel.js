@@ -21,6 +21,39 @@ const signInSchema = Joi.object({
 const getAllUsers = async () => {
  
 }
+const getAllArticle = async () => {
+  try {
+ const allArticle = await client.db("RecruitmentArticledatabase")
+ .collection("Article")
+ .find({}, { projection: { title: 1, salary: 1, address: 1, _id: 1 } })
+ .toArray();
+ console.log(allArticle);
+ return allArticle;
+} catch (err) {
+  console.error(err);
+} finally {
+  await client.close();
+}
+}
+const getDetailArticle = async (Id) => {
+  try {
+  const article = await client.db("RecruitmentArticledatabase")
+  .collection("Article")
+  .findOne({ _id: new ObjectId(Id) },
+  { projection: { title: 1, salary: 1, address: 1,detail: 1 } }                  
+  ).toArray();
+  return article;
+} catch (err) {
+  console.error(err);
+} finally {
+  await client.close();
+}
+const submitCV = async (articleId) => {
+  try{
+    
+  }
+}
+}
 const signUp = async (data) => {
   try {
  const { error } = signUpSchema.validate(data);
@@ -80,5 +113,6 @@ export const jobseekerModel = {
   getAllUsers,
   findOneById,
   signInWithGoogle,
-
+  getAllArticle,
+  getDetailArticle
 }
