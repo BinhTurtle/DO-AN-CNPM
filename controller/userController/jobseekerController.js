@@ -1,52 +1,67 @@
 // import { authenticate } from "passport";
 import { jobseekerModel } from "../../model/userModel/jobseekerModel.js";
-const signUp = async (req, res, next) => {
-    try {
-      const newUser = await jobseekerModel.signUp(req.body);
-      res.status(201).send(newUser)
-    } catch (e) {
-      console.error("Error adding document: ", e);
+import session from "express-session";
+const getUser = async (req,res,next) =>{
+  try {
+    const userId = req.user.id;
+    const user = await jobseekerModel.findUserById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
+    res.status(200).json({ user });
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    res.status(500).json({ message: 'An error occurred while fetching user data' });
   }
-    const signIn = async (req, res, next) => {
-      try {
-        const user = await jobseekerModel.signIn(req.body);
-        if (!user) {
-          return res.status(401).send({ message: "Invalid email or password" });
-        }
-        res.status(200).send({
-          message: "Login successful",
-          user,
-        });
-      } catch (e) {
-        console.error("Error during sign in:", e);
-        res.status(500).send({ message: "An error occurred during sign in" });
-      }
-    };
-  const googleAuthCallback = async (req, res) => {
+}
+const uploadCV = async (req, res, next) => {
     try {
-        console.log('Request User:', req.user); 
-        res.send("Welcome " + req.user.Name);
+      console.log("User", req.user)
+      const userId = req.user.id;
+      if (!userId) {
+        throw new Error("User not authenticated");
+      }
+      const fileCVPath = req.file?.path;
+      const cvName = req.body?.name;
+      if (!cvName ) {
+        throw new Error("Invalid request: Missing CV name");
+      }
+      if (!fileCVPath ) {
+        throw new Error("Invalid request: Missing file");
+      }
+      if (req.file.mimetype !== 'application/pdf') {
+        throw new Error("Invalid file type. Only PDF is allowed.");
+      }
+      const result = jobseekerModel.uploadCV(userId,fileCVPath,cvName)
+      res.status(200).json({ message: "CV uploaded successfully", userId });
     } catch (error) {
-        console.error('Error during Google auth callback:', error); 
-        res.send('lỗi');
+      console.error("Error during CV upload:", error);
+      res.status(500).json({ message: error.message });
     }
   };
   
-const authFailure = (req, res) => {
-  res.send("Không truy xuất được thông tin người dùng");
-};
-  const getUser = async (req, res, next) => {
-
+const updateListArticle = async (req,res,next) => {
+try{
+  const userId = req.user.id;
+  const articleId = req.params.id
+ return jobseekerModel.updateListArticle(userId,articleId)
+}catch(error){
+  console.error('Error during Submit:', error); 
+  res.send('lỗi');
+}
+}
+const getListArticleApply = async (req,res,next) => {
+  try{
+    const userId = req.user.id;
+   return jobseekerModel.getListArticleApply(userId)
+  }catch(error){
+    console.error('Error: ', error); 
+    res.send('lỗi');
   }
-  const logOut = async (req, res, next) => {
-
   }
   export const jobseekerController = {
-    signUp,
-    signIn,
+    uploadCV,
+    updateListArticle,
     getUser,
-    logOut,
-    googleAuthCallback,
-    authFailure
+    getListArticleApply
   }

@@ -1,118 +1,114 @@
 import Joi from 'joi'
 import {client} from '../../config/mongoDB.js'
-const signUpSchema = Joi.object({
-  email: Joi.string().email().required(),
-  password: Joi.string().min(6).required(),
-  fullName: Joi.string().min(3).required(),
-  firstName: Joi.string().min(1).required(),
-  middleName: Joi.string(),
-  lastName: Joi.string().min(1).required(),
-  dateOfBirth: Joi.date().required(),
-  address: Joi.string().required(),
-  experience: Joi.string().required(),
-  certifications: Joi.array().items(Joi.string()).default([]),
-  skills: Joi.array().items(Joi.string()).default([]),
-  education: Joi.string().required(),
-});
-const signInSchema = Joi.object({
-  email: Joi.string().email().required(),
-  password: Joi.string().min(6).required(),
-});
-const getAllUsers = async () => {
- 
-}
-const getAllArticle = async () => {
+import fs from 'fs';
+import { articleModel } from '../articleModel.js';
+import { ObjectId } from 'mongodb';
+const getUser = async (id) => {
   try {
- const allArticle = await client.db("RecruitmentArticledatabase")
- .collection("Article")
- .find({}, { projection: { title: 1, salary: 1, address: 1, _id: 1 } })
- .toArray();
- console.log(allArticle);
- return allArticle;
-} catch (err) {
-  console.error(err);
-} finally {
-  await client.close();
-}
-}
-const getDetailArticle = async (Id) => {
-  try {
-  const article = await client.db("RecruitmentArticledatabase")
-  .collection("Article")
-  .findOne({ _id: new ObjectId(Id) },
-  { projection: { title: 1, salary: 1, address: 1,detail: 1 } }                  
-  ).toArray();
-  return article;
-} catch (err) {
-  console.error(err);
-} finally {
-  await client.close();
-}
-const submitCV = async (articleId) => {
-  try{
-    
-  }
-}
-}
-const signUp = async (data) => {
-  try {
- const { error } = signUpSchema.validate(data);
-    if (error) {
-      throw new Error(error.details[0].message);
-    }
-    const existingUser = await client.db("Account").collection("Job Seeker").findOne({ email: data.email });
-    if (existingUser) {
-      throw new Error("User with this email already exists");
-    }
-    const newUser = {
-      email: data.email,
-      password: data.password,
-      fullName: data.fullName,
-      firstName: data.firstName,
-      middleName: data.middleName,
-      lastName: data.lastName,
-      dateOfBirth: data.dateOfBirth,
-      address: data.address,
-      experience: data.experience,
-      certifications: data.certifications,
-      skills: data.skills,
-      education: data.education,
-      createdAt: new Date(),
-    };
-    const result = await client.db("Account").collection("Job Seeker").insertOne(newUser);
-    return result.ops[0];
-  } catch (error) {
-    throw new Error(error.message || "Error during sign up");
-  }
-};
-const signIn = async (data) => {
-  try {
-    const { error } = signInSchema.validate(data);
-    if (error) {
-      throw new Error(error.details[0].message);
-    }
-    const user = await client.db("Account").collection("Job Seeker").findOne({ email: data.email });
+    const user = await client
+      .db("Account")
+      .collection("Job Seeker")
+      .findOne({ _id: new ObjectId(id) });
     if (!user) {
-      throw new Error("Invalid email or password");
+      return { error: 'User not found' };
     }
-    return user; 
+    return user;
   } catch (error) {
-    throw new Error(error.message || "Error during sign in");
+    console.error('Error fetching user:', error);
+    return { error: 'An error occurred while fetching the user' };
   }
 };
-const findOneById = async (id) => {
+const findUserById = async (id) => {
+  try {
+    const user = await client
+      .db("Account")
+      .collection("Job Seeker")
+      .findOne({ _id: new ObjectId(id) });
+    if (!user) {
+      return { error: 'User not found' };
+    }
+    return user;
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    return { error: 'An error occurred while fetching the user' };
+  }
+};
+const uploadCV = async (userId, fileCVPath, cvName) => {
+  if (!fs.existsSync(fileCVPath)) {
+    throw new Error("File not found.");
+  }
+  const cvBuffer = fs.readFileSync(fileCVPath);
+  const base64Data = cvBuffer.toString('base64')
+  const result = await client
+  .db("Account")
+  .collection("Job Seeker")
+  .updateOne(
+    { _id: new ObjectId(userId) }, // Điều kiện để tìm user
+    {
+      $push: {
+        CVProfile: { 
+          name: cvName,
+          cvFile: {
+            contentType: "application/pdf",
+            data: base64Data,
+          },
+          updatedAt: new Date(),
+        },
+      },
+    }
+  );
+if (result.matchedCount === 0) {
+  throw new Error("User not found");
 }
-const signInWithGoogle = async (profile) => {
-  const account = client.db("Account").collection("Job Seeker");
-  const result = await account.findOne({ googleId: profile.id });
-  return result;
+return { message: "CV profile updated successfully", userId: userId };
 }
+const updateListArticle = async (userId, articleId) => {
+  try {
+    const result = await client
+      .db("Account")
+      .collection("Job Seeker")
+      .updateOne(
+        { _id: new ObjectId(userId) },
+        { $addToSet: { ApplyList: new ObjectId(articleId) } }
+      );
+
+    if (result.matchedCount === 0) {
+      throw new Error("User not found");
+    }
+    if (result.modifiedCount === 0) {
+      return { message: "Article already in ApplyList" };
+    }
+    return { message: "Article added to ApplyList successfully" };
+
+  } catch (error) {
+    console.error("Error updating ApplyList:", error);
+    throw new Error(error.message || "Failed to update ApplyList.");
+  }
+};
+const getListArticleApply = async (userId) => {
+  try {
+    const List = await client
+      .db("Account")
+      .collection("Job Seeker")
+      .findOne({ _id: new ObjectId(userId) },
+      { projection: { articleList: 1, _id: 0 } } );
+      const articles = await client
+      .db("RecruitmentArticledatabase")
+      .collection("Article")
+      .find({ _id: { $in: List.map((id) => new ObjectId(id)) } },
+      { projection: { _id: 1,title: 1, salary: 0, address: 0,detail: 0 } })
+      .toArray();
+    return articles;
+  } catch (error) {
+    console.error("Error fetching articles:", error);
+    return { error: "An error occurred while fetching the articles." };
+  }
+};
+
 export const jobseekerModel = {
-  signUp,
-  signIn,
-  getAllUsers,
-  findOneById,
-  signInWithGoogle,
-  getAllArticle,
-  getDetailArticle
+  uploadCV,
+  updateListArticle,
+  getUser,
+  findUserById,
+  getListArticleApply
 }
