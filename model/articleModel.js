@@ -96,7 +96,7 @@ const updateSubmitCVForArticle = async (articleId, jobseekerId,data) => {
         name: name,
         gender: gender,
         gmail: gmail,
-        cvFile: selectedCV,
+        cvInfo: selectedCV,
         status: "Chưa Xem", 
         submittedAt: new Date(), 
       };

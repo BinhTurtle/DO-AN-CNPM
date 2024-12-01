@@ -11,6 +11,7 @@ recruiterRouter.route('/:id/update').put(authenticate,articleController.updateJo
 recruiterRouter.route(':id/delete').delete(authenticate,articleController.deleteJobApplication)
 recruiterRouter.route('/:id').get(authenticate,articleController.getDetailArticle)
 recruiterRouter.route('/:id/listCV').get(authenticate,recruiterController.getListCVFromArticle)
-recruiterRouter.route('/:id/listCV/:id').get(authenticate,recruiterController.getDetailCV)
+recruiterRouter.route('/:articleId/listCV/:cvId').get(authenticate,recruiterController.getDetailCV)
+recruiterRouter.route('/:articleId/listCV/:cvId/reply').get(authenticate,recruiterController.replyCV)
 recruiterRouter.route('/info').get(authenticate,recruiterController.getUser)
 export default recruiterRouter

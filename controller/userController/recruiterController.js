@@ -1,6 +1,8 @@
 // import { authenticate } from "passport";
 import { recruiterModel } from "../../model/userModel/recruiterModel.js";
 import session from "express-session";
+import fs from "fs";
+import path from "path";
 const getUser = async (req,res,next) =>{
   try {
     const userId = req.user.id;
@@ -30,9 +32,6 @@ const getUser = async (req,res,next) =>{
 //         res.status(500).json({ message: "Internal server error" });
 //       }
 //   };
-const getDetailCV = async (req,res,next) => {
-
-  }
 const getListCVFromArticle = async (req,res,next) => {
     try {
         const  articleId  = req.params.id;
@@ -61,7 +60,36 @@ const getListCVFromArticle = async (req,res,next) => {
         });
       }
   }
+  const getDetailCV = async (req, res, next) => {
+    try {
+      const articleId = req.params?.articleId;
+      const cvId = req.params?.cvId;
+      if (!articleId || !cvId) {
+        return res.status(400).json({ error: "Missing articleId or cvId in params" });
+      }
+      const cvFile = await recruiterModel.getDetailCV(articleId, cvId);
+      console.log(cvFile);
+      if (!cvFile || !cvFile.data) {
+        return res.status(404).json({ error: "CV file not found" });
+      }
 
+      const pdfBuffer = Buffer.from(cvFile.data, "base64");
+      const fileName = `${cvFile.name || "CV"}_${cvId}.pdf`;
+      const filePath = path.join("uploads", fileName);
+  
+      fs.writeFileSync(filePath, pdfBuffer);
+      res.download(filePath, fileName, (err) => {
+        if (err) {
+          console.error("Error sending file:", err);
+          return res.status(500).json({ error: "Error sending file" });
+        }
+        fs.unlinkSync(filePath);
+      });
+    } catch (error) {
+      console.error("Error in getDetailCV:", error);
+      res.status(500).json({ error: error.message });
+    }
+  };
 const replyCV = async (req,res,next) => {
 
   }

@@ -43,7 +43,7 @@ const uploadCV = async (userId, fileCVPath, cvName) => {
   .db("Account")
   .collection("Job Seeker")
   .updateOne(
-    { _id: new ObjectId(userId) }, // Điều kiện để tìm user
+    { _id: new ObjectId(userId) },
     {
       $push: {
         CVProfile: { 
@@ -71,10 +71,6 @@ const updateListArticle = async (userId, articleId) => {
         { _id: new ObjectId(userId) },
         { $addToSet: { ApplyList: new ObjectId(articleId) } }
       );
-
-    if (result.matchedCount === 0) {
-      throw new Error("User not found");
-    }
     if (result.modifiedCount === 0) {
       return { message: "Article already in ApplyList" };
     }

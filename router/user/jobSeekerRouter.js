@@ -7,7 +7,7 @@ const jobseekerRouter = express.Router();
 //Login
 jobseekerRouter.route('/').get(articleController.getAllArticle)
 jobseekerRouter.route('/:id').get(articleController.getDetailArticle)
-jobseekerRouter.route('/:id/submitCV').put(authenticate,jobseekerController.updateListArticle)
+jobseekerRouter.route('/:id/submitCV').post(authenticate,articleController.updateSubmitCVForArticle)
 jobseekerRouter.route('/info').get(authenticate,jobseekerController.getUser)
 //Register
 jobseekerRouter.route('/info/uploadCV').post(authenticate,uploadMiddleware,jobseekerController.uploadCV);
