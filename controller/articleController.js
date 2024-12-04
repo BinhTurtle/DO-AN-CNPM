@@ -3,6 +3,7 @@ import session from "express-session";
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { ObjectId } from "mongodb";
+
 const createJobApplication = async (req,res,next) => {
 
 }

@@ -60,6 +60,7 @@ const signUp = async (data) => {
     throw new Error(error.message || "Error during sign up");
   }
 };
+
 const signIn = async (data) => {
   try {
     const { error } = signInSchema.validate(data);
@@ -82,19 +83,23 @@ const signIn = async (data) => {
     throw new Error(error.message || "Error during sign in");
   }
 };
+
 const signInWithGoogleJobSeeker = async (profile) => {
   const account = client.db("Account").collection("Job Seeker");
   const result = await account.findOne({ googleId: profile.id });
   return result;
 }
+
 const signInWithGoogleRecruiter = async (profile) => {
   const account = client.db("Account").collection("Recruiter");
   const result = await account.findOne({ email: profile.email });
   return result;
 }
+
 const logout = async => {
 
 }
+
 export const authModel = {
     signUp,
     signIn,

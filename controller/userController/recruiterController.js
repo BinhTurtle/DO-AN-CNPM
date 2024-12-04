@@ -3,6 +3,7 @@ import { recruiterModel } from "../../model/userModel/recruiterModel.js";
 import session from "express-session";
 import fs from "fs";
 import path from "path";
+
 const getUser = async (req,res,next) =>{
   try {
     const userId = req.user.id;

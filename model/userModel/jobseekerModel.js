@@ -3,6 +3,7 @@ import {client} from '../../config/mongoDB.js'
 import fs from 'fs';
 import { articleModel } from '../articleModel.js';
 import { ObjectId } from 'mongodb';
+
 const getUser = async (id) => {
   try {
     const user = await client
@@ -18,6 +19,7 @@ const getUser = async (id) => {
     return { error: 'An error occurred while fetching the user' };
   }
 };
+
 const findUserById = async (id) => {
   try {
     const user = await client
@@ -33,6 +35,8 @@ const findUserById = async (id) => {
     return { error: 'An error occurred while fetching the user' };
   }
 };
+
+
 const uploadCV = async (userId, fileCVPath, cvName) => {
   if (!fs.existsSync(fileCVPath)) {
     throw new Error("File not found.");
@@ -62,6 +66,8 @@ if (result.matchedCount === 0) {
 }
 return { message: "CV profile updated successfully", userId: userId };
 }
+
+
 const updateListArticle = async (userId, articleId) => {
   try {
     const result = await client
@@ -81,6 +87,8 @@ const updateListArticle = async (userId, articleId) => {
     throw new Error(error.message || "Failed to update ApplyList.");
   }
 };
+
+
 const getListArticleApply = async (userId) => {
   try {
     const List = await client

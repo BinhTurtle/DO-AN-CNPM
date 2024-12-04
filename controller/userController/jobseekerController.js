@@ -1,6 +1,7 @@
 // import { authenticate } from "passport";
 import { jobseekerModel } from "../../model/userModel/jobseekerModel.js";
 import session from "express-session";
+
 const getUser = async (req,res,next) =>{
   try {
     const userId = req.user.id;

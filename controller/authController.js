@@ -3,6 +3,7 @@ import { authModel } from "../model/authModel.js";
 import session from "express-session";
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+
 const signUp = async (req, res, next) => {
     try {
       const newUser = await authModel.signUp(req.body);

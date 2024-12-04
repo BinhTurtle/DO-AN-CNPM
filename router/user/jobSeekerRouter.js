@@ -3,6 +3,7 @@ import { authenticate } from '../../middleware/authMiddleware.js';
 import { jobseekerController } from "../../controller/userController/jobseekerController.js"
 import { articleController } from '../../controller/articleController.js';
 import { uploadMiddleware } from '../../middleware/multer.js';
+
 const jobseekerRouter = express.Router();
 //Login
 jobseekerRouter.route('/').get(articleController.getAllArticle)
