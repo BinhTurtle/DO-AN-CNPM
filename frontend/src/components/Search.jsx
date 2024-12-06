@@ -1,10 +1,19 @@
-import React from 'react'
+import React, { useState } from 'react';
 //npm install react-icons
 import { AiOutlineSearch } from "react-icons/ai";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 //classname icon at aioutlinesearch when hover is click
 
 const Search = () => {
+  const [inputValue, setInputValue] = useState(""); // State để theo dõi giá trị trong input
+
+  const handleChange = (e) => {
+    setInputValue(e.target.value); // Cập nhật giá trị khi nhập vào
+  };
+
+  const handleClear = () => {
+    setInputValue(""); // Xóa giá trị trong input khi nhấn icon
+  };
   return (
     <div className='searchDiv grid gp-10 bg-greyIsh rounded-[10px] p-[1rem] w-[90%] m-auto '>
       <form action=''></form>
@@ -21,8 +30,15 @@ const Search = () => {
               type='text' 
               className='bg-transparent focus:outline-none w-full p-2' 
               placeholder='Tìm kiếm'
+              value={inputValue} // Gắn giá trị của state vào input
+              onChange={handleChange} // Khi nhập, cập nhật giá trị
             />
-            <AiOutlineCloseCircle className='text-[30px] flex-grow mr-[0.5rem] text-[#a5a6a6] hover:text-textColor icon'/>
+            {inputValue && (
+              <AiOutlineCloseCircle 
+                className='text-[30px] flex-grow mr-[0.5rem] text-[#a5a6a6] hover:text-textColor icon'
+                onClick={handleClear} // Xóa giá trị khi click vào icon
+              />
+            )}
         </div>
         {/* Div chứa icon tìm kiếm */}
         <div className='iconDiv flex items-center justify-center w-[50px] h-[40px] bg-black rounded-full cursor-pointer hover:bg-gray-500'>

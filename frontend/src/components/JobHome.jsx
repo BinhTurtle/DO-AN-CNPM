@@ -114,10 +114,31 @@ const SingleJob = ({ image, title, company, salary, location }) => {
 };
 
 const Job = () => {
+  const [hoverLeft, setHoverLeft] = useState(false);
+  const [hoverRight, setHoverRight] = useState(false);
   return (
     <div className='w-[90%] m-auto'>
       <div className='TitleJobsection text-[30px] flex mt-5 justify-between items-center'> 
         <span>Việc làm tốt nhất</span>
+        <span className='Dieuhuong flex items-center'>
+              {/* Icon left */}
+              <div 
+                className='cursor-pointer'
+                onMouseEnter={() => setHoverLeft(true)} 
+                onMouseLeave={() => setHoverLeft(false)}
+              >
+                {hoverLeft ? <IoIosArrowDropleftCircle /> : <IoIosArrowDropleft />}
+              </div>
+
+              {/* Icon right */}
+              <div 
+                className='cursor-pointer ml-2'
+                onMouseEnter={() => setHoverRight(true)} 
+                onMouseLeave={() => setHoverRight(false)}
+              >
+                {hoverRight ? <IoIosArrowDroprightCircle /> : <IoIosArrowDropright />}
+              </div>
+          </span>
       </div>
       <div className='jobContainer flex gap-10 justify-center flex-wrap items-center py-5'>
         {Data.map(({ id, image, title, company, salary, location }) => (
