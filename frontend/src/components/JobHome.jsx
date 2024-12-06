@@ -80,7 +80,7 @@ const SingleJob = ({ image, title, company, salary, location }) => {
 
   return (
     <div 
-      className='singleJob w-[280px] h-[135px] p-[15px] bg-white rounded-[20px] border border-black cursor-pointer'
+      className='singleJob w-[280px] h-[135px] p-[15px] bg-white rounded-[20px] border border-black cursor-pointer shadow-[4px_4px_6px_rgba(0,_0,_0,_0.3)]'
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -113,7 +113,7 @@ const SingleJob = ({ image, title, company, salary, location }) => {
   );
 };
 
-const Job = () => {
+const JobHome = () => {
   const [hoverLeft, setHoverLeft] = useState(false);
   const [hoverRight, setHoverRight] = useState(false);
   return (
@@ -156,4 +156,4 @@ const Job = () => {
   );
 };
 
-export default Job;
+export default JobHome;

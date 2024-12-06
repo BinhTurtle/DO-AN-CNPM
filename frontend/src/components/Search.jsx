@@ -15,7 +15,7 @@ const Search = () => {
     setInputValue(""); // Xóa giá trị trong input khi nhấn icon
   };
   return (
-    <div className='searchDiv grid gp-10 bg-greyIsh rounded-[10px] p-[1rem] w-[90%] m-auto '>
+    <div className='searchDiv grid gp-10 bg-greyIsh rounded-[30px] p-[1rem] w-[90%] m-auto '>
       <form action=''></form>
       <div className='firstDiv flex justify-between items-center rounded-[30px] gap-[10px] bg-white p-5 shadow-lg shadow-greyIsh-700'>
         {/*Div chứa tìm kiếm nâng cao*/}
