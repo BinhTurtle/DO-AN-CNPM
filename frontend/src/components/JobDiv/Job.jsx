@@ -20,7 +20,23 @@ const Data = [
   {
     id:2,
     image: logo1,
-    title: 'Software Engineer',
+    title: 'DevOps',
+    company: 'Công ty cổ phần VNG',
+    salary: '20 - 50 triệu đồng',
+    location: 'Hà Nội'
+  },
+  {
+    id:3,
+    image: logo1,
+    title: 'Designer',
+    company: 'Công ty cổ phần VNG',
+    salary: '20 - 50 triệu đồng',
+    location: 'Hà Nội'
+  },
+  {
+    id:4,
+    image: logo1,
+    title: 'CI/CD',
     company: 'Công ty cổ phần VNG',
     salary: '20 - 50 triệu đồng',
     location: 'Hà Nội'
@@ -34,17 +50,25 @@ const Data = [
     location: 'Hà Nội'
   },
   {
-    id:1,
+    id:2,
     image: logo1,
-    title: 'Software Engineer',
+    title: 'DevOps',
     company: 'Công ty cổ phần VNG',
     salary: '20 - 50 triệu đồng',
     location: 'Hà Nội'
   },
   {
-    id:1,
+    id:3,
     image: logo1,
-    title: 'Software Engineer',
+    title: 'Designer',
+    company: 'Công ty cổ phần VNG',
+    salary: '20 - 50 triệu đồng',
+    location: 'Hà Nội'
+  },
+  {
+    id:4,
+    image: logo1,
+    title: 'CI/CD',
     company: 'Công ty cổ phần VNG',
     salary: '20 - 50 triệu đồng',
     location: 'Hà Nội'
@@ -56,7 +80,7 @@ const Job = () => {
   const [hoverLeft, setHoverLeft] = useState(false);
   const [hoverRight, setHoverRight] = useState(false);
   return (
-    <div>
+    <div className='w-[90%] m-auto '>
         <div className='TitleJobsection text-[30px] flex mt-5 justify-between items-center'> 
           <span>Việc làm tốt nhất </span>
           <span className='Dieuhuong flex items-center'>

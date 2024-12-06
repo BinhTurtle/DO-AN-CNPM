@@ -10,7 +10,7 @@ const NavBar = () => {
   });
 
   return (
-    <div className='navBar flex flex-wrap justify-between items-center p-[3rem]'>
+    <div className='navBar flex flex-wrap justify-between items-center p-[3rem] w-[90%] m-auto '>
       {/* Logo và Thanh chọn */}
       <div className="logoDiv flex items-center gap-4 w-full sm:w-auto">
         <img src="./public/logo.png" alt="Logo" className="logofinal w-[70px] h-[70px]" />
