@@ -1,85 +1,17 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { IoHeartCircleOutline } from "react-icons/io5";
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import { IoLocationOutline } from "react-icons/io5";
 import { IoHeartCircle } from "react-icons/io5";
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { IoIosArrowDropleft, IoIosArrowDropright, IoIosArrowDropleftCircle, IoIosArrowDroprightCircle } from 'react-icons/io';
+import axios from 'axios';
 import { useLocation } from 'react-router-dom'; // Để lấy thông tin vị trí trang hiện tại
 //import logo company
 import logo1 from '/company/vnglogo.png';
-
-const Data = [
-  {
-    id:1,
-    image: logo1,
-    title: 'Software Engineer',
-    company: 'Công ty cổ phần VNG',
-    salary: '20 - 50 triệu đồng',
-    location: 'Hà Nội'
-  },
-  {
-    id:2,
-    image: logo1,
-    title: 'DevOps',
-    company: 'Công ty cổ phần VNG',
-    salary: '20 - 50 triệu đồng',
-    location: 'Hà Nội'
-  },
-  {
-    id:3,
-    image: logo1,
-    title: 'Designer',
-    company: 'Công ty cổ phần VNG',
-    salary: '20 - 50 triệu đồng',
-    location: 'Hà Nội'
-  },
-  {
-    id:4,
-    image: logo1,
-    title: 'CI/CD',
-    company: 'Công ty cổ phần VNG',
-    salary: '20 - 50 triệu đồng',
-    location: 'Hà Nội'
-  },
-  {
-    id:1,
-    image: logo1,
-    title: 'Software Engineer',
-    company: 'Công ty cổ phần VNG',
-    salary: '20 - 50 triệu đồng',
-    location: 'Hà Nội'
-  },
-  {
-    id:2,
-    image: logo1,
-    title: 'DevOps',
-    company: 'Công ty cổ phần VNG',
-    salary: '20 - 50 triệu đồng',
-    location: 'Hà Nội'
-  },
-  {
-    id:3,
-    image: logo1,
-    title: 'Designer',
-    company: 'Công ty cổ phần VNG',
-    salary: '20 - 50 triệu đồng',
-    location: 'Hà Nội'
-  },
-  {
-    id:4,
-    image: logo1,
-    title: 'CI/CD',
-    company: 'Công ty cổ phần ADU',
-    salary: '20 - 50 triệu đồng',
-    location: 'Hà Nội'
-  },
-]
-
 const SingleJob = ({ image, title, company, salary, location }) => {
   const [isHovered, setIsHovered] = useState(false);
-
   return (
     <div 
       className='singleJob w-[280px] h-[135px] p-[15px] bg-white rounded-[20px] border border-black cursor-pointer shadow-[4px_4px_6px_rgba(0,_0,_0,_0.3)]'
@@ -116,6 +48,10 @@ const SingleJob = ({ image, title, company, salary, location }) => {
 };
 
 const JobHome = () => {
+  const [jobs, setJobs] = useState([]); // State lưu danh sách công việc
+  const [loading, setLoading] = useState(true); // State theo dõi trạng thái loading
+  const [error, setError] = useState(null); // State lưu lỗi nếu có
+  const [fetch, setfetch] = useState("");
   const [selectedFilter, setSelectedFilter] = useState(''); // Bộ lọc đã chọn
   const [showOptions, setShowOptions] = useState(false);  // Điều khiển việc hiển thị lựa chọn bộ lọc
   const [selectedOptions, setSelectedOptions] = useState([]);  // Lưu các lựa chọn đã chọn
@@ -158,6 +94,26 @@ const JobHome = () => {
   };
   const [hoverLeft, setHoverLeft] = useState(false);
   const [hoverRight, setHoverRight] = useState(false);
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/jobseeker', {
+          withCredentials: true,  
+        });
+        setfetch("đã thực hiện lấy data");
+        setJobs(response.data); 
+      } catch (error) {
+        setError(error.message);  // Lưu lỗi nếu có
+      } finally {
+        setLoading(false);  // Kết thúc trạng thái loading
+      }
+    };
+
+    fetchJobs();  // Gọi hàm lấy dữ liệu
+  }, []); 
+  // const getDetailArticle = async () {
+  //   const detaiArticle = await axios.get('http://localhost:8080/jobseeker/:id)
+  // }
   return (
     <div className='w-[90%] m-auto'>
       <div className='TitleJobsection text-[30px] flex mt-5 justify-between items-center'> 
@@ -231,18 +187,31 @@ const JobHome = () => {
       )}
     </div>
       
-      <div className='jobContainer flex gap-10 justify-center flex-wrap items-center py-5'>
-        {Data.map(({ id, image, title, company, salary, location }) => (
-          <SingleJob 
-            key={id}
-            image={image}
-            title={title}
-            company={company}
-            salary={salary}
-            location={location}
-          />
-        ))}
-      </div>
+    <div className='jobContainer flex gap-10 justify-center flex-wrap items-center py-5'>
+  {loading ? (
+    // Hiển thị spinner hoặc thông báo khi đang tải
+    <div>Đang tải...</div>  // Hoặc sử dụng spinner nếu muốn
+  ) : error ? (
+    // Hiển thị lỗi nếu có
+    <div className="text-red-500">Có lỗi khi lấy dữ liệu: {error}</div>
+  ) : fetch && jobs.length > 0 ? (
+    // Nếu có dữ liệu và không có lỗi
+    jobs.map((job) => (
+      <SingleJob
+        key={job._id}
+        image={logo1}
+        title={job.title}
+        company="Công ty A"
+        salary={job.salary}
+        location={job.address}
+      />
+    ))
+  ) : (
+    // Hiển thị thông báo nếu không có công việc
+    <div>Không có công việc phù hợp</div>
+  )}
+</div>
+
     </div>
   );
 };

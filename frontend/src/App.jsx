@@ -20,18 +20,18 @@ const App = () => {
         <Routes>
           {/* Trang chủ */}
           <Route path="/" element={<Home />} />
-
+          <Route path="/jobseeker" element={<Home />} />
           {/* Trang hồ sơ */}
-          <Route path="/cv" element={<CV />} />
+          <Route path="/jobseeker/cv" element={<CV />} />
 
           {/* Trang công việc */}
-          <Route path="/job" element={<Job />} />
+          <Route path="/jobseeker/job" element={<Job />} />
 
           {/* Trang yêu thích */}
-          <Route path="/favorite" element={<Favor />} />
+          <Route path="/jobseeker/favorite" element={<Favor />} />
 
           {/* Trang trạng thái */}
-          <Route path="/status" element={<Status />} />
+          <Route path="/jobseeker/status" element={<Status />} />
         </Routes>
         
         <Footer /> {/* Footer có thể hiển thị dưới tất cả các trang */}

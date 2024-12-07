@@ -2,33 +2,60 @@ import React, { useState, useEffect, useRef } from 'react';
 import { AiOutlineBell} from 'react-icons/ai';
 import { FaUserCircle } from 'react-icons/fa';
 import { MdLogout } from "react-icons/md";
-import { Link } from 'react-router-dom';  // Import Link để điều hướng giữa các trang
-
+import { Link } from 'react-router-dom'; 
+import axios from 'axios';
+import { jwtDecode } from "jwt-decode";
 const NavBar = () => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false); // Quản lý việc hiển thị box thông tin người dùng
 
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Quản lý trạng thái đăng nhập, mặc định là chưa đăng nhập
-  const [userInfo, setUserInfo] = useState({
-    avatar: '/vnglogo.png', // URL avatar người dùng (nếu có), có thể thay thế bằng ảnh thật
-    name: 'Nguyễn Văn A',
-    email: 'user@example.com'  // Email người dùng (chỉ khi đăng nhập)
-  });
-
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Quản lý trạng thái đăng nhập, mặc định là chưa đăng nhập
+  const [userInfo, setUserInfo] = useState("");
   const handleAvatarClick = () => {
     setIsDropdownVisible(!isDropdownVisible); // Khi nhấp vào avatar, toggle (hiển thị/ẩn) dropdown
   };
 
-  const handleLogout = () => {
-    // Xử lý đăng xuất tại đây
-    alert("Bạn đã đăng xuất!");
-    setIsLoggedIn(false); // Cập nhật trạng thái đăng xuất
-    setIsDropdownVisible(false); // Ẩn dropdown khi đăng xuất
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post('http://localhost:8080/jobseeker/logout', {}, { withCredentials: true });
+      
+      if (response.status === 200) {
+        alert("Bạn đã đăng xuất!");
+        setIsLoggedIn(false); // Cập nhật trạng thái đăng xuất
+        setIsDropdownVisible(false); // Ẩn dropdown khi đăng xuất
+      } else {
+        alert("Đăng xuất thất bại. Vui lòng thử lại.");
+      }
+    } catch (error) {
+      console.error('Lỗi khi đăng xuất:', error);
+      alert("Đăng xuất thất bại. Vui lòng thử lại.");
+    }
   };
-    
-
+  const handleLogin = async () => {
+    try {
+      window.location.href = 'http://localhost:8080/jobseeker/auth/google';
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
+  };
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  };
+  useEffect(() => {
+    const token = getCookie('token');
+    if (token) {
+      try {
+        const user = jwtDecode(token);
+        setUserInfo(user);
+        setIsLoggedIn(true);
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    }
+  }, []);
   return (
     <div className='navBar flex flex-wrap justify-between items-center p-[2rem] w-[90%] m-auto '>
-      {/* Logo và Thanh chọn */}
       <div className="logoDiv flex items-center gap-4 w-full sm:w-auto">
        <img src="/logo.png" alt="Logo" className="logofinal w-[70px] h-[70px]" />
         <h1 className="logo text-[25px]">
@@ -46,7 +73,7 @@ const NavBar = () => {
         {!isLoggedIn ? (
           // Chưa đăng nhập
           <>
-            <li className="menuList text-[#6f6f6f] text-blue-500 hover:text-white hover:bg-black hover:rounded-[20px]  p-2"><strong>Đăng nhập/Đăng ký</strong></li>
+            <li className="menuList text-[#6f6f6f] text-blue-500 hover:text-white hover:bg-black hover:rounded-[20px]  p-2" onClick={handleLogin}><strong>Đăng nhập/Đăng ký</strong></li>
             <li className="menuList text-[#6f6f6f] border-2 border-black rounded-[20px] hover:text-white hover:bg-black hover:rounded-[17px] text-black p-2"
             onClick={handleAvatarClick}>Nhà tuyển dụng</li>
           </>
