@@ -10,6 +10,7 @@ import Favor from './components/Favor'
 import Status from './components/Status'
 import Footer from './components/Footer';
 import ImgBg from './components/ImgBg'
+import Profile from './components/Profile';
 const App = () => {
   return (
     <Router>
@@ -32,6 +33,9 @@ const App = () => {
 
           {/* Trang trạng thái */}
           <Route path="/status" element={<Status />} />
+
+          {/* Trang trạng thái */}
+          <Route path="/profile" element={<Profile />} />
         </Routes>
         
         <Footer /> {/* Footer có thể hiển thị dưới tất cả các trang */}
