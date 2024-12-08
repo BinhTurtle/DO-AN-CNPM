@@ -85,8 +85,51 @@ const deleteAdmin = async (userId) => {
   }
 };
 
+//userType nhận giá trị "Job Seeker" hoặc "Recruiter"
+const fetchUser = async (id, userType) => {
+  try {
+    if (userType != "Job Seeker" && userType != "Recruiter") {
+      return { error: 'Invalid user type' };
+    }
+
+    const user = await client
+      .db("Account")
+      .collection(userType)
+      .findOne({ _id: new ObjectId(id) });
+
+    if (!user) {
+      return { error: 'User not found' };
+    }
+    return user;
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    return { error: 'An error occurred while fetching the user' };
+  }
+};
+
+const deleteUser = async (userId, userType) => {
+  try {
+    const user = await client
+      .db("Account")
+      .collection(userType)
+      .findOne({ _id: new ObjectId(userId) });
+
+    if (!user) {
+        return { error: 'User not found' };
+    }
+
+    const result = await client.db("Account").collection(userType).deleteOne(user);
+    return result.ops[0];
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return { error: "An error occurred while deleting a user." };
+  }
+};
+
 export const jobseekerModel = {
     addAdmin,
     getAdminById,
     deleteAdmin,
-}
+    fetchUser,
+    deleteUser,
+  }

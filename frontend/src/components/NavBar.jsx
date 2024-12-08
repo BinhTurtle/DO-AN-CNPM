@@ -116,7 +116,7 @@ const NavBar = () => {
 
           {/* Các tính năng */}
           <ul className="space-y-2 items-center text-center">
-            <li className="cursor-pointer text-gray-700 hover:text-blue-500 py-2">Hồ sơ</li>
+          <Link to="/profile" className="cursor-pointer text-gray-700 hover:text-blue-500 py-2">Hồ sơ</Link>
             <li className="cursor-pointer text-gray-700 hover:text-blue-500 py-2">Cài đặt</li>
             <li 
               className="cursor-pointer text-red-500 hover:text-red-600 flex items-center justify-center gap-2 py-2"
