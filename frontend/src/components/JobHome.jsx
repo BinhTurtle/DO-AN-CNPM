@@ -5,6 +5,7 @@ import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import { IoLocationOutline } from "react-icons/io5";
 import { IoHeartCircle } from "react-icons/io5";
 import { AiOutlineCloseCircle } from 'react-icons/ai';
+import { useNavigate } from 'react-router-dom';
 import { IoIosArrowDropleft, IoIosArrowDropright, IoIosArrowDropleftCircle, IoIosArrowDroprightCircle } from 'react-icons/io';
 import { useLocation } from 'react-router-dom'; // Để lấy thông tin vị trí trang hiện tại
 //import logo company
@@ -78,18 +79,25 @@ const Data = [
 ]
 
 const SingleJob = ({ image, title, company, salary, location }) => {
-  const [isHovered, setIsHovered] = useState(false);
+  const [isHoveredLove, setIsHoveredLove] = useState(false);
+
+  const navigate = useNavigate(); 
+  const handleJobClick = () => {
+    navigate('/companyDetail'); // Navigate đến /CompanyDetail khi click
+  };
 
   return (
     <div 
       className='singleJob w-[280px] h-[135px] p-[15px] bg-white rounded-[20px] border border-black cursor-pointer shadow-[4px_4px_6px_rgba(0,_0,_0,_0.3)]'
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onClick={handleJobClick} // Trigger navigation khi bấm
     >
       <div className='com_top flex justify-between items-center mb-2'> 
         <h2 className='text-lg font-bold'>{title}</h2> 
-        <span className='text-xl'> 
-          {isHovered ? <IoHeartCircle /> : <IoHeartCircleOutline />} 
+        <span className='text-xl'
+        onMouseEnter={() => setIsHoveredLove(true)}
+        onMouseLeave={() => setIsHoveredLove(false)}
+        > 
+          {isHoveredLove ? <IoHeartCircle /> : <IoHeartCircleOutline />} 
         </span>
       </div> 
       <div className='com_bot flex items-center'> 
@@ -156,6 +164,7 @@ const JobHome = () => {
     setShowOptions(false);
     setSelectedOptions([]);
   };
+
   const [hoverLeft, setHoverLeft] = useState(false);
   const [hoverRight, setHoverRight] = useState(false);
   return (
@@ -248,3 +257,4 @@ const JobHome = () => {
 };
 
 export default JobHome;
+export { SingleJob };
