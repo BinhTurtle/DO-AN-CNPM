@@ -279,7 +279,7 @@ const CompDetail = () => {
 
         </div>
 
-        <div className="relative p-6 bg-white border border-black rounded-[20px] shadow-md text-center h-fit w-[400px]">
+        <div className="p-6 bg-white border border-black rounded-[20px] shadow-md text-center h-fit w-[400px] relative">
       {/* Nút báo cáo */}
       <button
         onClick={handleReportClick}

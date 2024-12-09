@@ -1,6 +1,25 @@
-import React from "react";
+import React, { useState } from 'react';
 
 const Profile = () => {
+    // Danh sách 63 tỉnh thành của Việt Nam
+    const provinces = [
+        "Hà Nội", "Hồ Chí Minh", "Đà Nẵng", "Cần Thơ", "Hải Phòng", "An Giang", "Bà Rịa - Vũng Tàu", "Bắc Giang", 
+        "Bắc Kạn", "Bạc Liêu", "Bắc Ninh", "Bến Tre", "Bình Dương", "Bình Định", "Bình Phước", "Bình Thuận", 
+        "Cà Mau", "Cao Bằng", "Đắk Lắk", "Đắk Nông", "Điện Biên", "Đồng Nai", "Đồng Tháp", "Gia Lai", "Hà Giang", 
+        "Hà Nam", "Hải Dương", "Hậu Giang", "Hòa Bình", "Hưng Yên", "Khánh Hòa", "Kiên Giang", "Kon Tum", "Lai Châu", 
+        "Lâm Đồng", "Lạng Sơn", "Lào Cai", "Long An", "Nam Định", "Nghệ An", "Ninh Bình", "Ninh Thuận", "Phú Thọ", 
+        "Phú Yên", "Quảng Bình", "Quảng Nam", "Quảng Ngãi", "Quảng Ninh", "Quảng Trị", "Sóc Trăng", "Sơn La", "Tây Ninh", 
+        "Thái Bình", "Thái Nguyên", "Thanh Hóa", "Thừa Thiên Huế", "Tiền Giang", "TP Hồ Chí Minh", "Trà Vinh", 
+        "Tuyên Quang", "Vĩnh Long", "Vĩnh Phúc", "Yên Bái"
+      ];
+    
+      // State để lưu trữ tỉnh thành được chọn
+      const [selectedProvince, setSelectedProvince] = useState("");
+    
+      const handleChange = (event) => {
+        setSelectedProvince(event.target.value);
+      };
+  
   return (
     <div
                         className="flex flex-col w-full items-center text-[#3C3C3C] border-[#00000000] gap-10"
@@ -446,19 +465,23 @@ const Profile = () => {
                                 data-oid="z.30cjv"
                             >
                                 <div className="flex flex-col gap-1" data-oid="ou687g5">
-                                    <label
-                                        className="font-semibold mb-1 text-[32px]"
-                                        data-oid="ww0h0sd"
-                                    >
+                                    <label className="font-semibold mb-1 text-[32px]" data-oid="ww0h0sd">
                                         Địa điểm làm việc:
                                     </label>
-                                    <button
+                                    
+                                    {/* Dropdown chọn tỉnh thành */}
+                                    <select
+                                        value={selectedProvince}
+                                        onChange={handleChange}
                                         className="p-4 border-2 border-[#000000] bg-white rounded-[20px] focus:outline-none hover:bg-gray-100 transition-colors w-[200px] text-center"
                                         data-oid="mcx407b"
                                     >
-                                        Chọn địa điểm làm việc
-                                    </button>
-                                </div>
+                                        <option value="">--- Chọn địa điểm ---</option>
+                                        {provinces.map((province, index) => (
+                                        <option key={index} value={province}>{province}</option>
+                                        ))}
+                                    </select>
+                                    </div>
                                 <div className="flex flex-col gap-1" data-oid="n6kg3jm">
                                     <label
                                         className="font-semibold mb-1 text-[32px]"
@@ -499,23 +522,27 @@ const Profile = () => {
                                     />
                                 </div>
                             </div>
-                            <div
-                                className="flex-1 border-2 border-black rounded-[20px] p-4 flex flex-col items-start gap-4 h-[400px]"
-                                data-oid="z12kgsm"
-                            >
-                                <h3
-                                    className="font-semibold text-left text-[32px]"
-                                    data-oid="fo_peri"
-                                >
-                                    Bổ sung CV của bạn:
-                                </h3>
-                                <button
-                                    className="p-4 border-2 border-[#000000] bg-white rounded-[20px] focus:outline-none hover:bg-gray-100 transition-colors w-[200px] text-center"
-                                    data-oid="mmhowy2"
-                                >
-                                    Thêm CV
-                                </button>
-                            </div>
+                            <div 
+                        className="flex-1 border-2 border-black rounded-[20px] p-4 flex flex-col items-start gap-4 h-[400px] hover:bg-gray-100 transition-colors" 
+                        data-oid="z12kgsm"
+                        >
+                        {/* Tiêu đề */}
+                        <h3 
+                            className="font-semibold text-left text-[32px]" 
+                            data-oid="fo_peri"
+                        >
+                            Bổ sung CV của bạn:
+                        </h3>
+
+                        {/* Nút thêm CV */}
+                        <button 
+                            className="p-4 border-2 border-[#000000] bg-white rounded-[20px] focus:outline-none hover:bg-gray-100 transition-colors w-[200px] text-center" 
+                            data-oid="mmhowy2"
+                        >
+                            Thêm CV
+                        </button>
+                        </div>
+
                         </div>
                     </div>
     );
@@ -523,4 +550,3 @@ const Profile = () => {
 
 
 export default Profile;
-raf;

@@ -24,6 +24,20 @@ const NavBar = () => {
     setIsLoggedIn(false); // Cập nhật trạng thái đăng xuất
     setIsDropdownVisible(false); // Ẩn dropdown khi đăng xuất
   };
+
+  // State để kiểm tra xem danh sách thông báo có mở hay không
+  const [isOpen, setIsOpen] = useState(false);
+  // State để lưu trữ danh sách thông báo
+  const [notifications, setNotifications] = useState([
+    "Có một công việc mới phù hợp với bạn từ Công ty XYZ.",
+    "Bạn có một tin nhắn mới từ nhà tuyển dụng HCMUT.",
+    "Đừng quên hoàn thành hồ sơ ứng tuyển của bạn trước 13/12/2024 nhé!"
+  ]);
+
+  // Hàm xử lý khi bấm vào chuông
+  const handleBellClick = () => {
+    setIsOpen(!isOpen); // Mở/đóng danh sách thông báo
+  };
     
 
   return (
@@ -53,9 +67,30 @@ const NavBar = () => {
         ) : (
           // Sau đăng nhập
           <>
-            <li className="menuList text-[#6f6f6f] cursor-pointer p-2">
-              <AiOutlineBell className="text-[25px]" /> {/* Icon thông báo khi đã đăng nhập */}
-            </li>
+            <div className="relative">
+              <li className="menuList text-[#6f6f6f] cursor-pointer p-2" onClick={handleBellClick}>
+                <AiOutlineBell className="text-[25px]" />
+                
+                {/* Dấu chấm đỏ nếu có thông báo */}
+                {notifications.length > 0 && (
+                  <span className="absolute top-0 right-0 bg-red-500 w-3 h-3 rounded-full"></span>
+                )}
+              </li>
+
+              {/* Hộp thông báo */}
+              {isOpen && notifications.length > 0 && (
+                <div className="absolute top-10 right-0 bg-white border-2 border-gray-300 rounded-[20px] p-4 shadow-lg w-[250px]">
+                  <h3 className="font-semibold text-lg">Thông báo</h3>
+                  <ul className="mt-2 text-sm">
+                    {notifications.map((notification, index) => (
+                      <li key={index} className="py-2 border-b">
+                        {notification}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
             <li className="menuList text-[#6f6f6f] cursor-pointer p-2 flex items-center gap-2" onClick={handleAvatarClick}>
               {/* Avatar hoặc Icon người dùng */}
               <img
@@ -89,7 +124,14 @@ const NavBar = () => {
 
           {/* Các tính năng */}
           <ul className="space-y-2 items-center text-center">
-          <Link to="/profile" className="cursor-pointer text-gray-700 hover:text-blue-500 py-2">Hồ sơ</Link>
+            {/* Link đến trang profile */}
+            <li>
+              <Link to="/profile" className="cursor-pointer text-gray-700 hover:text-blue-500 py-2">
+                Hồ sơ
+              </Link>
+            </li>
+
+            {/* Các mục khác trong dropdown */}
             <li className="cursor-pointer text-gray-700 hover:text-blue-500 py-2">Cài đặt</li>
             <li 
               className="cursor-pointer text-red-500 hover:text-red-600 flex items-center justify-center gap-2 py-2"
@@ -99,11 +141,11 @@ const NavBar = () => {
               Đăng xuất
             </li>
             <li
-                className="cursor-pointer text-gray-700 hover:text-blue-500 py-2"
-                onClick={() => setIsDropdownVisible(false)} // Ẩn dropdown khi click vào "Thoát"
-              >
-                Thoát
-              </li>
+              className="cursor-pointer text-gray-700 hover:text-blue-500 py-2"
+              onClick={() => setIsDropdownVisible(false)} // Ẩn dropdown khi click vào "Thoát"
+            >
+              Thoát
+            </li>
           </ul>
           
         </div>

@@ -11,6 +11,7 @@ import Status from './components/Status'
 import Footer from './components/Footer';
 import ImgBg from './components/ImgBg'
 import CompDetail from './components/CompDetail';
+import Profile from './components/Profile'
 
 const App = () => {
   return (
@@ -37,6 +38,8 @@ const App = () => {
 
           {/* Trang Công ty */}
           <Route path="/companyDetail" element={<CompDetail />} />
+
+          <Route path="/profile" element={<Profile />} />
 
         </Routes>
         <Footer /> {/* Footer có thể hiển thị dưới tất cả các trang */}
