@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { SingleJob } from './JobHome'; // Import SingleJob từ JobHome
+import React, { useState,useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { SingleJob } from './JobHome';
 import logo1 from '/company/vnglogo.png';
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import { IoLocateOutline, IoLocationOutline } from "react-icons/io5";
@@ -9,75 +10,20 @@ import { PiListMagnifyingGlassLight } from "react-icons/pi";
 import { GrLocationPin, GrStatusGood } from "react-icons/gr";
 import { IoHomeOutline } from "react-icons/io5";
 import { IoMdTime } from "react-icons/io";
-import { BiGridAlt } from 'react-icons/bi'; // Icon lĩnh vực
-import { FaUsers } from 'react-icons/fa'; // Icon quy mô
+import { BiGridAlt } from 'react-icons/bi';
+import { FaUsers } from 'react-icons/fa';
 import { FaFlag } from 'react-icons/fa';
-
-const Data = [
-  {
-    id: 1,
-    image: logo1,
-    title: 'Software Engineer',
-    company: 'Công ty cổ phần VNG',
-    salary: '20 - 50 triệu đồng',
-    location: 'Hà Nội'
-  },
-  {
-    id: 2,
-    image: logo1,
-    title: 'DevOps',
-    company: 'Công ty cổ phần VNG',
-    salary: '20 - 50 triệu đồng',
-    location: 'Hà Nội'
-  },
-  {
-    id: 2,
-    image: logo1,
-    title: 'DevOps',
-    company: 'Công ty cổ phần VNG',
-    salary: '20 - 50 triệu đồng',
-    location: 'Hà Nội'
-  },
-  {
-    id: 2,
-    image: logo1,
-    title: 'DevOps',
-    company: 'Công ty cổ phần VNG',
-    salary: '20 - 50 triệu đồng',
-    location: 'Hà Nội'
-  },
-  {
-    id: 2,
-    image: logo1,
-    title: 'DevOps',
-    company: 'Công ty cổ phần VNG',
-    salary: '20 - 50 triệu đồng',
-    location: 'Hà Nội'
-  },
-  {
-    id: 2,
-    image: logo1,
-    title: 'DevOps',
-    company: 'Công ty cổ phần VNG',
-    salary: '20 - 50 triệu đồng',
-    location: 'Hà Nội'
-  },
-  {
-    id: 2,
-    image: logo1,
-    title: 'DevOps',
-    company: 'Công ty cổ phần VNG',
-    salary: '20 - 50 triệu đồng',
-    location: 'Hà Nội'
-  },
-];
-
+import axios from 'axios';
 const CompDetail = () => {
   const [isReportOpen, setIsReportOpen] = useState(false); // Trạng thái mở/đóng modal báo cáo
   const [selectedReason, setSelectedReason] = useState(''); // Lý do báo cáo
   const [otherReason, setOtherReason] = useState(''); // Ghi chú cho lý do "Khác"
   const [evidence, setEvidence] = useState(null); // File minh chứng
-
+  const { id } = useParams(); // Lấy id từ URL
+  const [jobDetail, setJobDetail] = useState(null);
+  const [jobRandom,setJobRamdom] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const handleReportClick = () => {
     setIsReportOpen(true); // Mở modal báo cáo
   };
@@ -93,10 +39,41 @@ const CompDetail = () => {
     alert(`Đã báo cáo thành công!`);
     setIsReportOpen(false);
   };
+  useEffect(() => {
+    const fetchJobDetail = async () => {
+      try {
+        const response1 = await axios.get(`http://localhost:8080/jobseeker/${id}`);
+        setJobDetail(response1.data);
+        const response2 = await axios.get('http://localhost:8080/jobseeker', {
+          withCredentials: true,  
+        });
+        const allJobs = response2.data;
+        const randomJobs = allJobs
+          .sort(() => Math.random() - 0.5)
+          .slice(0, 7);
   
-  const handleFileUpload = (e) => {
-    setEvidence(e.target.files[0]);
+        setJobRamdom(randomJobs);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchJobDetail();
+  }, [id]);
+  if (loading) return <div>Đang tải...</div>;
+  if (error) return <div className="text-red-500">Lỗi: {error}</div>;
+  const description = jobDetail?.data.detail.description || '';
+  const request = jobDetail?.data.detail.request || '';
+  const benefit = jobDetail?.data.detail.benefit || '';
+
+  const splitTextToSentences = (text) => {
+    return text.split('.').map((sentence, index) => sentence.trim()).filter((sentence) => sentence !== '');
   };
+
+  const descriptionSentences = splitTextToSentences(description);
+  const requestSentences = splitTextToSentences(request);
+  const benefitSentences = splitTextToSentences(benefit);
 
   return (
     <div className='w-[90%] m-auto'>
@@ -105,21 +82,22 @@ const CompDetail = () => {
       </div>
       <div className='flex gap-[1.5rem] justify-between m-auto'>
         <div className='jobContainer flex flex-col gap-[20px] items-center'>
-          {Data.map(({ id, image, title, company, salary, location }) => (
-            <SingleJob 
-              key={id}
-              image={image}
-              title={title}
-              company={company}
-              salary={salary}
-              location={location}
-            />
-          ))}
+          {    jobRandom.map((job) => (
+      <SingleJob
+        key={job._id}
+        id={job._id}
+        image={logo1}
+        title={job.title}
+        company={job.nameCompany}
+        salary={job.salary}
+        location={job.address}
+      />
+    ))}
         </div>
 
         <div className='infoDetail flex-column gap-10 justify-center flex-wrap items-center py-5 border-2 border-black p-4 rounded-[20px]'> 
             <div className='JobTitleBox text-[30px] flex justify-between items-center ml-4 font-bold'>
-                Có làm thì mới có ăn bé ơi, ko ai cho ai free gì đâu nhớ nhé
+            {jobDetail.data.title}
             </div>
             
             <div className='ChecklistBox mt-4'>
@@ -129,7 +107,7 @@ const CompDetail = () => {
                 <RiMoneyDollarCircleLine className="text-3xl flex-shrink-0" /> {/* Icon lớn */}
                 <div className="flex flex-col">
                   <span className="font-bold text-lg">Mức lương:</span>
-                  <span className="text-md text-gray-500">50 triệu</span>
+                  <span className="text-md text-gray-500">{jobDetail.data.salary}</span>
                 </div>
               </div>
 
@@ -138,7 +116,7 @@ const CompDetail = () => {
                 <IoLocationOutline className="text-3xl flex-shrink-0" /> {/* Icon lớn */}
                 <div className="flex flex-col">
                   <span className="font-bold text-lg">Địa điểm:</span>
-                  <span className="text-md text-gray-500">TP.HCM</span>
+                  <span className="text-md text-gray-500">{jobDetail.data.address}</span>
                 </div>
               </div>
 
@@ -147,7 +125,7 @@ const CompDetail = () => {
                 <GiSandsOfTime className="text-3xl flex-shrink-0" /> {/* Icon lớn */}
                 <div className="flex flex-col">
                   <span className="font-bold text-lg">Kinh nghiệm:</span>
-                  <span className="text-md text-gray-500">Intern</span>
+                  <span className="text-md text-gray-500">{jobDetail.data.experience}</span>
                 </div>
               </div>
             </div> 
@@ -182,23 +160,13 @@ const CompDetail = () => {
 
                 {/* Nội dung bullet list */}
                 <div className="flex-col gap-1 ml-10">
-                  <div className="flex items-start">
-                    <span className="text-xl font-bold text-black mr-2">•</span>
-                    <span>Việc này nhàn lắm bé ơi</span>
-                  </div>
-                  <div className="flex items-start">
-                    <span className="text-xl font-bold text-black mr-2">•</span>
-                    <span>Chỉ cần bên anh là được</span>
-                  </div>
-                  <div className="flex items-start">
-                    <span className="text-xl font-bold text-black mr-2">•</span>
-                    <span>Không yêu cầu kinh nghiệm</span>
-                  </div>
-                  <div className="flex items-start">
-                    <span className="text-xl font-bold text-black mr-2">•</span>
-                    <span>Làm việc từ xa hay gần công ty thoải mái</span>
-                  </div>
-                </div>
+          {descriptionSentences.map((sentence, index) => (
+            <div key={index} className="flex items-start">
+              <span className="text-xl font-bold text-black mr-2">•</span>
+              <span>{sentence}</span>
+            </div>
+          ))}
+        </div>
             </div>
 
             <div className="RequireDiv flex flex-col gap-4 p-4">
@@ -210,19 +178,13 @@ const CompDetail = () => {
 
                 {/* Nội dung bullet list */}
                 <div className="flex-col gap-1 ml-10">
-                  <div className="flex items-start">
-                    <span className="text-xl font-bold text-black mr-2">•</span>
-                    <span>Là nữ</span>
-                  </div>
-                  <div className="flex items-start">
-                    <span className="text-xl font-bold text-black mr-2">•</span>
-                    <span>Xinh là điểm cộng</span>
-                  </div>
-                  <div className="flex items-start">
-                    <span className="text-xl font-bold text-black mr-2">•</span>
-                    <span>Dưới hoặc bằng 20 tuổi</span>
-                  </div>
-                </div>
+          {requestSentences.map((sentence, index) => (
+            <div key={index} className="flex items-start">
+              <span className="text-xl font-bold text-black mr-2">•</span>
+              <span>{sentence}</span>
+            </div>
+          ))}
+        </div>
             </div>
             
             <div className="InterestDiv flex flex-col gap-4 p-4">
@@ -234,15 +196,13 @@ const CompDetail = () => {
 
                 {/* Nội dung bullet list */}
                 <div className="flex-col gap-1 ml-10">
-                  <div className="flex items-start">
-                    <span className="text-xl font-bold text-black mr-2">•</span>
-                    <span>Có anh</span>
-                  </div>
-                  <div className="flex items-start">
-                    <span className="text-xl font-bold text-black mr-2">•</span>
-                    <span>Đảm bảo sẽ có người chăm lo, nhắn tin mỗi ngày, trừ mùa thi và deadline nhớ nha em iu</span>
-                  </div>
-                </div>
+          {benefitSentences.map((sentence, index) => (
+            <div key={index} className="flex items-start">
+              <span className="text-xl font-bold text-black mr-2">•</span>
+              <span>{sentence}</span>
+            </div>
+          ))}
+        </div>
             </div>
 
             <div className="LocationDiv flex flex-col gap-4 p-4">
@@ -256,7 +216,7 @@ const CompDetail = () => {
                 <div className="flex-col gap-1 ml-10">
                   <div className="flex items-start">
                     <span className="text-xl font-bold text-black mr-2">•</span>
-                    <span>Bất cứ nơi nào em thích</span>
+                    {jobDetail.data.detail.detailAddress}
                   </div>
                 </div>
             </div>

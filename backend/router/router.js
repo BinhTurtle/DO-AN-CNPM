@@ -16,7 +16,7 @@ Router.route('/')
     </html>
   `);
 });
+Router.use('/', authRouter);
 Router.use('/jobseeker', jobseekerRouter);
 Router.use('/recruiter',recruiterRouter);
-Router.use('/', authRouter);
 export default Router

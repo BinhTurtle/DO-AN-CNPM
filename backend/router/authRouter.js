@@ -1,5 +1,6 @@
 import express from 'express'
 import passport from "../passport.js"
+import { authenticate } from '../middleware/authMiddleware.js';
 // import { userValidation } from '../validations/userValidation.js'
 import { authController } from '../controller/authController.js';
 const authRouter = express.Router();
@@ -11,7 +12,7 @@ authRouter.get('/jobseeker/auth/google/callback',
         failureRedirect: '/jobseeker/auth/google/callback/failure'
 }));
 authRouter.get('/jobseeker/auth/google/callback/success', authController.googleAuthCallbackJobseeker);
-authRouter.get('/jobseeker/auth/google/callback/failure', authController.authFailure);
+authRouter.get('/jobseeker/auth/google/callback/failure', authController.googleAuthCallbackJobseeker);
 
 // Login with Google recruiter
 authRouter.get('/recruiter/auth/google', passport.authenticate('recruiter-google', { scope: ['profile', 'email'] }));
@@ -21,7 +22,7 @@ authRouter.get('/recruiter/auth/google/callback',
         failureRedirect: '/recruiter/auth/google/callback/failure'
 }));
 authRouter.get('/recruiter/auth/google/callback/success', authController.googleAuthCallbackRecruiter);
-authRouter.get('/recruiter/auth/google/callback/failure', authController.authFailure)
+authRouter.get('/recruiter/auth/google/callback/failure', authController.googleAuthCallbackRecruiter);
 //Login
 authRouter.route('/jobseeker/login').post(authController.signInWithJobseeker);
 //Register

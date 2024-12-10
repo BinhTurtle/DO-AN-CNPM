@@ -40,6 +40,17 @@ const uploadCV = async (req, res, next) => {
       res.status(500).json({ message: error.message });
     }
   };
+  const deleteCV = async (req, res, next) => {
+    const { cvId } = req.params; 
+    const userId = req.user.id;
+    try {
+      const result = await jobseekerModel.deleteCV(cvId, userId);
+      res.status(200).json(result);
+    } catch (error) {
+      console.error('Error while deleting CV:', error);
+      res.status(500).json({ message: `Có lỗi xảy ra khi xóa CV: ${error.message}` });
+    }
+  };
   
 const updateListArticle = async (req, res, next) => {
   try {
@@ -125,6 +136,7 @@ const getListArticleApply = async (req,res,next) => {
   
   export const jobseekerController = {
     uploadCV,
+    deleteCV,
     updateListArticle,
     getUser,
     getListArticleApply,

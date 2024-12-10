@@ -6,9 +6,23 @@ import dotenv from 'dotenv';
 const signUpWithJobseeker = async (req, res, next) => {
     try {
       const newUser = await authModel.signUpWithJobseeker(req.body);
-      res.status(201).send(newUser)
-    } catch (e) {
-      console.error("Error adding document: ", e);
+      console.log("newUser",newUser)
+    const token = jwt.sign(
+        { id: newUser._id, email: newUser.email, name: newUser.name },
+        process.env.JWT_SECRET, 
+        { expiresIn: '1h' } 
+    );
+    console.log("token after:",token);
+    res.cookie('token', token, {
+      httpOnly: false,  
+      secure: false,
+      maxAge: 3600000,
+    });
+    req.user = newUser;
+    console.log("cookie after",req.cookies);
+    res.status(201).json({ message: 'User created successfully', user: newUser })
+    }  catch (error) {
+      res.status(400).json({ error: error.message });
     }
   }
 const signInWithJobseeker = async (req, res, next) => {
@@ -39,6 +53,10 @@ const signInWithJobseeker = async (req, res, next) => {
     };
 const googleAuthCallbackJobseeker = async (req, res) => {
     try {
+      if (!req.user) {
+        console.error('User not found during Google auth callback');
+        return res.redirect('http://localhost:5173/jobseeker/register');
+    }
         console.log('Request User:', req.user); 
         const token = jwt.sign(
             { id: req.user._id, email: req.user.email, name: req.user.Name },
@@ -61,6 +79,10 @@ const googleAuthCallbackJobseeker = async (req, res) => {
   }; 
   const googleAuthCallbackRecruiter = async (req, res) => {
     try {
+      if (!req.user) {
+        console.error('User not found during Google auth callback');
+        return res.redirect('http://localhost:5173/recruiter/register');
+    }
         console.log('Request User:', req.user); 
         const token = jwt.sign(
             { id: req.user._id, email: req.user.email, name: req.user.Name },
@@ -88,9 +110,14 @@ const logOut = async (req, res, next) => {
     res.clearCookie('token', {
       httpOnly: false,  
       secure: false,  
-      sameSite: 'None', 
+      path: '/', 
     });
-
+    res.clearCookie('connect.sid', {
+      path: '/',
+      secure: false,
+      httpOnly: false,
+    });
+    console.log("Cookies after clear:", req.cookies);
     res.status(200).send({ message: 'Logged out successfully' });
   } catch (error) {
     console.error('Error during logout:', error);

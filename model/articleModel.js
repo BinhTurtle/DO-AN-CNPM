@@ -95,8 +95,6 @@ const getDetailArticle = async (Id) => {
     return article;
   } catch (err) {
     console.error(err);
-  } finally {
-    await client.close();
   }
   }
 const getArticlesByRecruiterId = async (recruiterId) => {

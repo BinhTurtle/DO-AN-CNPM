@@ -51,6 +51,7 @@ const uploadCV = async (userId, fileCVPath, cvName) => {
     {
       $push: {
         CVProfile: { 
+          _id: new ObjectId(),
           name: cvName,
           cvFile: {
             contentType: "application/pdf",
@@ -65,6 +66,26 @@ if (result.matchedCount === 0) {
   throw new Error("User not found");
 }
 return { message: "CV profile updated successfully", userId: userId };
+}
+const deleteCV = async (CVID,userId) =>{
+  try {
+    const result = await client
+    .db("Account")
+    .collection("Job Seeker")
+    .updateOne(
+      { _id: new ObjectId(userId) },  
+      { $pull: { CVProfile: { _id: new ObjectId(CVID) } } }  // Xóa CV theo cvId
+    );
+
+    // Kiểm tra kết quả
+    if (result.modifiedCount === 0) {
+      throw new Error('Không tìm thấy CV hoặc không thể xóa.');
+    }
+
+    return { message: 'CV đã được xóa thành công.' };
+  } catch (error) {
+    throw new Error(`Có lỗi xảy ra: ${error.message}`);
+  }
 }
 const updateListArticle = async (userId, articleId) => {
   try {
@@ -128,7 +149,6 @@ const getFavouriteArticle = async (userId) => {
     return { error: "An error occurred while fetching the articles." };
   }
 };
-
 const addFavouriteArticle = async (userId, articleId) => {
   try {
     const result = await client
@@ -170,6 +190,7 @@ const removeFavouriteArticle = async (userId, articleId) => {
 
 export const jobseekerModel = {
   uploadCV,
+  deleteCV,
   updateListArticle,
   getUser,
   findUserById,
