@@ -116,30 +116,23 @@ const getArticlesByRecruiterId = async (recruiterId) => {
         throw new Error(error.message || "Failed to retrieve articles.");
     }
 };
-const updateSubmitCVForArticle = async (articleId, jobseekerId,data) => {
+const updateSubmitCVForArticle = async (articleId, jobseekerId) => {
     try {
-      const { name,gender,gmail} = data;
-      if (!name || !gender || !gmail) {
-        return res.status(400).json({
-          success: false,
-          message: "Missing required fields: articleId, name, or cvId.",
-        });
-      }
       const user = await client
       .db("Account")
       .collection("Job Seeker")
       .findOne(
         { _id: new ObjectId(jobseekerId) },
-        { projection: { CVProfile: 1 } } 
+        { projection: { CVProfile: 1, Name : 1, gender: 1, email: 1, } } 
       );
       const selectedCV = user.CVProfile[0];
       console.log("CV",selectedCV)
       const newJobseeker = {
         id: new ObjectId(),
         userId: jobseekerId,
-        name: name,
-        gender: gender,
-        gmail: gmail,
+        name: user.Name,
+        gender: user.gender,
+        email: user.email,
         cvInfo: selectedCV,
         status: "Chưa Xem", 
         submittedAt: new Date(), 

@@ -6,14 +6,12 @@ import { uploadMiddleware } from '../../middleware/multer.js';
 
 const adminRouter = express.Router();
 
-adminRouter.route('/').get(authenticate, articleController.getAdmin)
+//adminRouter.route('/').get(articleController.getAllArticle)
 
 //CRUD
-adminRouter.route('/create').post(authenticate, adminController.addAdmin)
-adminRouter.route(':id/delete').delete(authenticate, adminController.deleteAdmin)
-adminRouter.route('/info').get(authenticate, adminController.getAdmin)
+recruiterRouter.route('/create').post(authenticate, adminController.addAdmin)
+recruiterRouter.route(':id/delete').delete(authenticate, adminController.deleteAdmin)
 
+recruiterRouter.route('/info').get(authenticate, adminController.getAdmin)
 
-adminRouter.route(':userId/delete').delete(authenticate, adminController.deleteUser)
-adminRouter.route(':userId/info').get(authenticate, adminController.getUser)
 export default adminRouter

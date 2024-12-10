@@ -107,18 +107,19 @@ const getDetailArticle = async (req, res, next) => {
     try {
       const  articleId  = req.params.id; 
       const userId = req.user.id;
-    const result = await articleModel.updateSubmitCVForArticle(articleId,userId, req.body);
-    if (result) {
-        return res.status(200).json({
-          success: true,
-          message: "CV submitted successfully.",
-        });
-      } else {
-        return res.status(400).json({
-          success: false,
-          message: "Failed to update article with CV information.",
-        });
-      }
+    const result = await articleModel.updateSubmitCVForArticle(articleId,userId);
+    next();
+    // if (result) {
+    //     return res.status(200).json({
+    //       success: true,
+    //       message: "CV submitted successfully.",
+    //     });
+    //   } else {
+    //     return res.status(400).json({
+    //       success: false,
+    //       message: "Failed to update article with CV information.",
+    //     });
+    //   }
     } catch (err) {
       console.error(err);
       res.status(500).json({

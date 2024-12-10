@@ -3,7 +3,7 @@ import cors from 'cors';
 import session from 'express-session';
 import passport from './passport.js'; 
 import cookieParser from 'cookie-parser';
-import Router from '../Assignment/router/router.js';
+import Router from '../backend/router/router.js';
 import { connectDB } from './config/mongoDB.js';
 connectDB();
 const app = express();

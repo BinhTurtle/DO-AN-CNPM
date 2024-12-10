@@ -49,11 +49,12 @@ const updateListArticle = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Invalid userId or articleId" });
     }
     const result = await jobseekerModel.updateListArticle(userId, articleId);
-    if (result.success) {
-      return res.status(200).json(result);
-    } else {
-      return res.status(400).json(result);
-    }
+    next();
+    // if (result.success) {
+    //   return res.status(200).json(result);
+    // } else {
+    //   return res.status(400).json(result);
+    // }
   } catch (error) {
     console.error("Error during Submit:", error);
     res.status(500).json({ success: false, message: error.message || "Server Error" });
@@ -69,9 +70,65 @@ const getListArticleApply = async (req,res,next) => {
     res.send('lỗi');
   }
   }
+  const getFavouriteArticleController = async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const result = await jobseekerModel.getFavouriteArticle(userId);
+      if (result.error) {
+        return res.status(500).json({ success: false, message: result.error });
+      }
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Error in getFavouriteArticleController:", error);
+      res.status(500).json({ success: false, message: "Internal server error." });
+    }
+  };
+  
+  const addFavouriteArticleController = async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const articleId = req.params.articleId;
+  
+      if (!articleId) {
+        return res.status(400).json({ success: false, message: "Article ID is required." });
+      }
+  
+      const result = await jobseekerModel.addFavouriteArticle(userId, articleId);
+      if (result.error) {
+        return res.status(500).json({ success: false, message: result.error });
+      }
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Error in addFavouriteArticleController:", error);
+      res.status(500).json({ success: false, message: "Internal server error." });
+    }
+  };
+  const removeFavouriteArticleController = async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const articleId = req.params.articleId;
+  
+      if (!articleId) {
+        return res.status(400).json({ success: false, message: "Article ID is required." });
+      }
+  
+      const result = await jobseekerModel.removeFavouriteArticle(userId, articleId);
+      if (result.error) {
+        return res.status(500).json({ success: false, message: result.error });
+      }
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Error in removeFavouriteArticleController:", error);
+      res.status(500).json({ success: false, message: "Internal server error." });
+    }
+  };
+  
   export const jobseekerController = {
     uploadCV,
     updateListArticle,
     getUser,
-    getListArticleApply
+    getListArticleApply,
+    getFavouriteArticleController,
+    addFavouriteArticleController,
+    removeFavouriteArticleController,
   }
