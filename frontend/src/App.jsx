@@ -10,6 +10,7 @@ import Favor from './components/Favor'
 import Status from './components/Status'
 import Footer from './components/Footer';
 import ImgBg from './components/ImgBg'
+import CompDetail from './components/CompDetail';
 
 const App = () => {
   return (
@@ -33,6 +34,10 @@ const App = () => {
 
           {/* Trang trạng thái */}
           <Route path="/jobseeker/status" element={<Status />} />
+
+          {/* Trang Công ty */}
+          <Route path="/companyDetail" element={<CompDetail />} />
+
         </Routes>
         <Footer /> {/* Footer có thể hiển thị dưới tất cả các trang */}
       </div>
