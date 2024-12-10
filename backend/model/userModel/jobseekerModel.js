@@ -73,7 +73,7 @@ const updateListArticle = async (userId, articleId) => {
       .collection("Job Seeker")
       .updateOne(
         { _id: new ObjectId(userId) },
-        { $addToSet: { ApplyList: new ObjectId(articleId) } } // Sử dụng $addToSet để tránh trùng lặp
+        { $addToSet: { ApplyList: new ObjectId(articleId) } }
       );
 
     if (result.modifiedCount === 0) {
@@ -105,11 +105,76 @@ const getListArticleApply = async (userId) => {
     return { error: "An error occurred while fetching the articles." };
   }
 };
+const getFavouriteArticle = async (userId) => {
+  try {
+    const user = await client
+      .db("Account")
+      .collection("Job Seeker")
+      .findOne(
+        { _id: new ObjectId(userId) },
+        { projection: { favouriteList: 1, _id: 0 } }
+      );
+    if (!user || !user.favouriteList || user.favouriteList.length === 0) {
+      return { success: true, articles: [] };
+    }
+    const articles = await client
+      .db("RecruitmentArticledatabase")
+      .collection("Article")
+      .find({ _id: { $in: user.favouriteList.map(id => new ObjectId(id)) } })
+      .toArray();
+    return { success: true, articles };
+  } catch (error) {
+    console.error("Error fetching articles:", error);
+    return { error: "An error occurred while fetching the articles." };
+  }
+};
+
+const addFavouriteArticle = async (userId, articleId) => {
+  try {
+    const result = await client
+      .db("Account")
+      .collection("Job Seeker")
+      .updateOne(
+        { _id: new ObjectId(userId) },
+        { $addToSet: { favouriteList: articleId } }
+      );
+
+    return result.modifiedCount > 0
+      ? { success: true, message: "Article added to favourites." }
+      : { success: false, message: "Article is already in favourites or user not found." };
+  } catch (error) {
+    console.error("Error adding article to favourites:", error);
+    return { error: "An error occurred while adding the article to favourites." };
+  }
+};
+
+const removeFavouriteArticle = async (userId, articleId) => {
+  try {
+    const result = await client
+      .db("Account")
+      .collection("Job Seeker")
+      .updateOne(
+        { _id: new ObjectId(userId) },
+        { $pull: { favouriteList: articleId } }
+      );
+    if (result.modifiedCount > 0) {
+      return { success: true, message: "Article removed from favourites." };
+    } else {
+      return { success: false, message: "Article not found in favourites or user not found." };
+    }
+  } catch (error) {
+    console.error("Error removing article from favourites:", error);
+    return { error: "An error occurred while removing the article from favourites." };
+  }
+};
 
 export const jobseekerModel = {
   uploadCV,
   updateListArticle,
   getUser,
   findUserById,
-  getListArticleApply
+  getListArticleApply,
+  getFavouriteArticle,
+  addFavouriteArticle,
+  removeFavouriteArticle,
 }
