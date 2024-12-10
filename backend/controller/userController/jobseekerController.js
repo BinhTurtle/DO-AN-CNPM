@@ -41,8 +41,10 @@ const uploadCV = async (req, res, next) => {
     }
   };
   const deleteCV = async (req, res, next) => {
-    const { cvId } = req.params; 
+    const  cvId  = req.params.CVId; 
     const userId = req.user.id;
+    console.log("CV:",cvId);
+    console.log("UserId:",userId)
     try {
       const result = await jobseekerModel.deleteCV(cvId, userId);
       res.status(200).json(result);

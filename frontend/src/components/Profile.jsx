@@ -117,7 +117,7 @@ const Profile = () => {
             <div key={index} className="flex flex-col gap-2 border p-4 rounded-md">
               {/* Hiển thị tên CV và id */}
               <p className="font-semibold">Tên CV: {cv?.name || "Chưa có tên CV"}</p>
-              <p className="font-semibold">ID: {cv?.id}</p>
+              <p className="font-semibold">ID: {cv?._id}</p>
               <a
                 href={`data:${cv?.cvFile?.contentType};base64,${cv?.cvFile?.data}`}
                 download={`${cv?.name || "CV"}.pdf`}
@@ -126,7 +126,7 @@ const Profile = () => {
                 Tải xuống CV
               </a>
               <button
-                onClick={() => handleDeleteCV(cv.id)}
+                onClick={() => handleDeleteCV(cv._id)}
                 className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600"
               >
                 Xóa CV

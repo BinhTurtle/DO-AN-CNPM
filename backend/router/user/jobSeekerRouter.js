@@ -14,8 +14,8 @@ jobseekerRouter.route('/:id/submitCV').post(authenticate,articleController.updat
 //Register
 jobseekerRouter.route('/info/uploadCV').post(authenticate,uploadMiddleware,jobseekerController.uploadCV);
 jobseekerRouter.route('/info/deleteCV/:CVId').delete(authenticate,jobseekerController.deleteCV);
-jobseekerRouter.route('/info/listApply').get(authenticate,jobseekerController.getListArticleApply)
-jobseekerRouter.route('/info/favouriteArticle').get(authenticate,jobseekerController.getFavouriteArticleController)
-jobseekerRouter.route('/info/:articleId/favouriteArticle').delete(authenticate,jobseekerController.removeFavouriteArticleController)
-jobseekerRouter.route('/:articleId/favouriteArticle').post(authenticate,jobseekerController.addFavouriteArticleController)
+jobseekerRouter.route('/info/listApply').get(authenticate,jobseekerController.getListArticleApply);
+jobseekerRouter.route('/info/favouriteArticle').get(authenticate,jobseekerController.getFavouriteArticleController);
+jobseekerRouter.route('/info/:articleId/favouriteArticle').delete(authenticate,jobseekerController.removeFavouriteArticleController);
+jobseekerRouter.route('/:articleId/favouriteArticle').post(authenticate,jobseekerController.addFavouriteArticleController);
 export default jobseekerRouter
