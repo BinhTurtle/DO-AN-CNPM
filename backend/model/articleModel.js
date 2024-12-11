@@ -2,33 +2,41 @@ import Joi from 'joi'
 import {client} from '../config/mongoDB.js'
 import fs from 'fs';
 import { ObjectId } from 'mongodb';
-const createJobApplication = async(recruiterId, data) => {
+const createJobApplication = async (recruiterId, data) => {
   try {
-    if (
-      !data.title ||
-      !data.salary ||
-      !data.address ||
-      !data.detail
-    ) {
+    if (!data.title || !data.salary || !data.detail) {
       throw new Error("Missing required fields");
+    }
+
+    // Fetch recruiter details directly within the function
+    const recruiterDetails = await client
+      .db("RecruitmentArticledatabase")
+      .collection("Recruiters")
+      .findOne({ _id: new ObjectId(recruiterId) });
+
+    if (!recruiterDetails) {
+      throw new Error("Recruiter not found");
     }
     const newArticle = {
       _id: new ObjectId(),
       recruiterId: new ObjectId(recruiterId),
       title: data.title,
+      company: recruiterDetails.name,
       salary: data.salary,
-      address: data.address,
+      address: recruiterDetails.address,
       detail: data.detail,
       jobseekerList: {
         quantity: 0,
-        list:[], 
+        list: [],
       },
       createdAt: new Date(),
     };
+
     const result = await client
       .db("RecruitmentArticledatabase")
       .collection("Article")
       .insertOne(newArticle);
+
     return result.ops[0];
   } catch (error) {
     console.error("Error creating job application:", error.message);
@@ -54,6 +62,7 @@ const updateJobApplication = async (jobId, data) => {
   try {
     const updateFields = {
       ...(data.title && { title: data.title }),
+      ...(data.company && { company: data.company }),
       ...(data.salary && { salary: data.salary }),
       ...(data.address && { address: data.address }),
       ...(data.detail && { detail: data.detail }),
@@ -77,9 +86,8 @@ const getAllArticle = async () => {
     try {
    const allArticle = await client.db("RecruitmentArticledatabase")
    .collection("Article")
-   .find({}, { projection: { title: 1, salary: 1, address: 1, _id: 1 } })
+   .find({}, { projection: { title: 1, salary: 1, address: 1,nameCompany: 1, _id: 1 } })
    .toArray();
-   console.log(allArticle);
    return allArticle;
   } catch (err) {
     console.error(err);
@@ -90,13 +98,11 @@ const getDetailArticle = async (Id) => {
     const article = await client.db("RecruitmentArticledatabase")
     .collection("Article")
     .findOne({ _id: new ObjectId(Id) },
-    { projection: { title: 1, salary: 1, address: 1,detail: 1 } }                  
+    { projection: { title: 1, salary: 1, address: 1,detail: 1 ,experience: 1,} }                  
     );
     return article;
   } catch (err) {
     console.error(err);
-  } finally {
-    await client.close();
   }
   }
 const getArticlesByRecruiterId = async (recruiterId) => {
@@ -116,7 +122,7 @@ const getArticlesByRecruiterId = async (recruiterId) => {
         throw new Error(error.message || "Failed to retrieve articles.");
     }
 };
-const updateSubmitCVForArticle = async (articleId, jobseekerId) => {
+const updateSubmitCVForArticle = async (articleId, jobseekerId, CVId) => {
     try {
       const user = await client
       .db("Account")
@@ -125,7 +131,7 @@ const updateSubmitCVForArticle = async (articleId, jobseekerId) => {
         { _id: new ObjectId(jobseekerId) },
         { projection: { CVProfile: 1, Name : 1, gender: 1, email: 1, } } 
       );
-      const selectedCV = user.CVProfile[0];
+      const selectedCV = user.CVProfile.find(cv => cv._id.toString() === CVId);
       console.log("CV",selectedCV)
       const newJobseeker = {
         id: new ObjectId(),

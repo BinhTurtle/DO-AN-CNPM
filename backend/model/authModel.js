@@ -5,14 +5,14 @@ import { client } from '../config/mongoDB.js';
 const signUpJobseekerSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
-  surname: Joi.string().min(1).required(),
-  name: Joi.string().min(1).required(),
-  dateOfBirth: Joi.date().required(),
+  name: Joi.string().required(),
+  cccd: Joi.string().required(),
+  gender: Joi.string().valid("Nam", "Nữ").required(),
+  birthday: Joi.date().required(),
   address: Joi.string().required(),
-  experience: Joi.string().required(),
-  certifications: Joi.array().items(Joi.string()).default([]),
-  skills: Joi.array().items(Joi.string()).default([]),
-  education: Joi.string().required(),
+  location: Joi.string().required(),
+  workingMethods: Joi.array().items(Joi.string()).required(),
+  fields: Joi.array().items(Joi.string()).required(),
 });
 const signInSchema = Joi.object({
   email: Joi.string().email().required(),
@@ -28,31 +28,42 @@ const signInSchema = Joi.object({
 //LoginModel User
 const signUpWithJobseeker = async (data) => {
   try {
- const { error } = signUpJobseekerSchema.validate(data);
+    const { error } = signUpJobseekerSchema.validate(data);
     if (error) {
       throw new Error(error.details[0].message);
     }
-    const existingUser = await client.db("Account").collection("Job Seeker").findOne({ email: data.email });
+    const existingUser = await client
+      .db("Account")
+      .collection("Job Seeker")
+      .findOne({ email: data.email });
+
     if (existingUser) {
       throw new Error("User with this email already exists");
     }
     const newUser = {
       email: data.email,
       password: data.password,
-      surname: data.surname,
       name: data.name,
-      dateOfBirth: data.dateOfBirth,
+      cccd: data.cccd,
+      gender: data.gender,
+      birthday: data.birthday,
       address: data.address,
-      experience: data.experience,
-      certifications: data.certifications,
-      skills: data.skills,
-      education: data.education,
+      location: data.location,
+      workingMethods: data.workingMethods,
+      fields: data.fields,
       createdAt: new Date(),
-      role: 'Jobseeker',
+      CVProfile: [],
+      ApplyList: [],
+      favouriteList: [],
+      role: "Jobseeker",
     };
-    const result = await client.db("Account").collection("Job Seeker").insertOne(newUser);
-    return result.ops[0];
-  } catch (error) {
+    const result = await client
+      .db("Account")
+      .collection("Job Seeker")
+      .insertOne(newUser);
+
+      return { ...newUser, _id: result.insertedId };
+    } catch (error) {
     throw new Error(error.message || "Error during sign up");
   }
 };
@@ -128,7 +139,7 @@ const signInWithRecruiter = async (data) => {
 };
 const signInWithGoogleJobSeeker = async (profile) => {
   const account = client.db("Account").collection("Job Seeker");
-  const result = await account.findOne({ googleId: profile.id });
+  const result = await account.findOne({ email: profile.email });
   return result;
 }
 

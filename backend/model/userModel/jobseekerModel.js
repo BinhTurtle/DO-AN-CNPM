@@ -51,6 +51,7 @@ const uploadCV = async (userId, fileCVPath, cvName) => {
     {
       $push: {
         CVProfile: { 
+          _id: new ObjectId(),
           name: cvName,
           cvFile: {
             contentType: "application/pdf",
@@ -66,6 +67,48 @@ if (result.matchedCount === 0) {
 }
 return { message: "CV profile updated successfully", userId: userId };
 }
+const deleteCV = async (CVID,userId) =>{
+  try {
+    const result = await client
+    .db("Account")
+    .collection("Job Seeker")
+    .updateOne(
+      { _id: new ObjectId(userId) },  
+      { $pull: { CVProfile: { _id: new ObjectId(CVID) } } }  // Xóa CV theo cvId
+    );
+
+    // Kiểm tra kết quả
+    if (result.modifiedCount === 0) {
+      throw new Error('Không tìm thấy CV hoặc không thể xóa.');
+    }
+
+    return { message: 'CV đã được xóa thành công.' };
+  } catch (error) {
+    throw new Error(`Có lỗi xảy ra: ${error.message}`);
+  }
+}
+const getListCV = async (userId) => {
+  try {
+    const user = await client
+      .db("Account")
+      .collection("Job Seeker")
+      .findOne(
+        { _id: new ObjectId(userId) },
+        { projection: { CVProfile: 1, _id: 0 } }
+      );
+
+    if (!user || !user.CVProfile || user.CVProfile.length === 0) {
+      return { message: "Không tìm thấy CV nào." };
+    }
+
+    return { 
+      message: "Lấy danh sách CV thành công.", 
+      data: user.CVProfile
+    };
+  } catch (error) {
+    throw new Error(`Có lỗi xảy ra: ${error.message}`);
+  }
+};
 const updateListArticle = async (userId, articleId) => {
   try {
     const result = await client
@@ -88,20 +131,51 @@ const updateListArticle = async (userId, articleId) => {
 };
 const getListArticleApply = async (userId) => {
   try {
-    const List = await client
+    const jobSeeker = await client
       .db("Account")
       .collection("Job Seeker")
-      .findOne({ _id: new ObjectId(userId) },
-      { projection: { articleList: 1, _id: 0 } } );
-      const articles = await client
+      .findOne(
+        { _id: new ObjectId(userId) },
+        { projection: { ApplyList: 1, _id: 0 } }
+      );
+    if (!jobSeeker || !jobSeeker.ApplyList || jobSeeker.ApplyList.length === 0) {
+      return { message: "No applied articles found for the user.", data: [] };
+    }
+    const articles = await client
       .db("RecruitmentArticledatabase")
       .collection("Article")
-      .find({ _id: { $in: List.map((id) => new ObjectId(id)) } },
-      { projection: { _id: 1,title: 1, salary: 0, address: 0,detail: 0 } })
+      .find(
+        { _id: { $in: jobSeeker.ApplyList.map((id) => new ObjectId(id)) } },
+        {
+          projection: {
+            _id: 1,
+            title: 1, // Tiêu đề bài viết
+            "jobseekerList.list": 1, // Danh sách ứng viên
+          },
+        }
+      )
       .toArray();
-    return articles;
+
+    // Xử lý danh sách bài viết và trạng thái CV
+    const result = articles.map((article) => {
+      const userCV = article.jobseekerList.list.find(
+        (jobseeker) => String(jobseeker.userId) === String(userId)
+      );
+
+      return {
+        articleId: article._id,
+        title: article.title,
+        cvStatus: userCV ? userCV.status : "Unknown", // Trạng thái CV
+        cvName: userCV ? userCV.cvInfo.name : "unKnow",
+        submittedAt: userCV ? userCV.submittedAt : null, // Ngày nộp CV
+      };
+    });
+
+    // Trả về kết quả sau khi xử lý
+    return { message: "Successfully fetched articles and CV statuses.", data: result };
   } catch (error) {
-    console.error("Error fetching articles:", error);
+    console.error("Error fetching articles for user:", error);
+    // Trả về lỗi nếu có lỗi trong quá trình lấy dữ liệu
     return { error: "An error occurred while fetching the articles." };
   }
 };
@@ -128,7 +202,6 @@ const getFavouriteArticle = async (userId) => {
     return { error: "An error occurred while fetching the articles." };
   }
 };
-
 const addFavouriteArticle = async (userId, articleId) => {
   try {
     const result = await client
@@ -170,6 +243,8 @@ const removeFavouriteArticle = async (userId, articleId) => {
 
 export const jobseekerModel = {
   uploadCV,
+  deleteCV,
+  getListCV,
   updateListArticle,
   getUser,
   findUserById,

@@ -97,7 +97,7 @@ const getDetailArticle = async (req, res, next) => {
       if (!article) {
         return res.status(404).json({ message: "Article not found" });
       }
-      res.status(200).json({ message: "Article found", data: article });
+      res.status(200).json({data: article });
     } catch (error) {
       console.error("Error fetching article details:", error);
       res.status(500).json({ message: "Internal server error" });
@@ -107,7 +107,8 @@ const getDetailArticle = async (req, res, next) => {
     try {
       const  articleId  = req.params.id; 
       const userId = req.user.id;
-    const result = await articleModel.updateSubmitCVForArticle(articleId,userId);
+      const CVID = req.body.CVID;
+      const result = await articleModel.updateSubmitCVForArticle(articleId,userId, CVID);
     next();
     // if (result) {
     //     return res.status(200).json({

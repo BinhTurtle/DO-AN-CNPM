@@ -11,13 +11,13 @@ import axios from 'axios';
 import { useLocation } from 'react-router-dom'; // Để lấy thông tin vị trí trang hiện tại
 //import logo company
 import logo1 from '/company/vnglogo.png';
-const SingleJob = ({ image, title, company, salary, location }) => {
+const SingleJob = ({ id,image, title, company, salary, location }) => {
   
   const [isHoveredLove, setIsHoveredLove] = useState(false);
 
   const navigate = useNavigate(); 
   const handleJobClick = () => {
-    navigate('/companyDetail'); // Navigate đến /CompanyDetail khi click
+    navigate(`/jobDetail/${id}`);
   };
   return (
     <div 
@@ -209,9 +209,10 @@ const JobHome = () => {
     jobs.map((job) => (
       <SingleJob
         key={job._id}
+        id={job._id}
         image={logo1}
         title={job.title}
-        company="Công ty A"
+        company={job.nameCompany}
         salary={job.salary}
         location={job.address}
       />
