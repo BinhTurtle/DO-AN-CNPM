@@ -5,18 +5,17 @@ import { MdLogout } from "react-icons/md";
 import { Link } from 'react-router-dom';  // Import Link để điều hướng giữa các trang
 
 const NavBar = ({ role, setRole }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Quản lý trạng thái đăng nhập, mặc định là chưa đăng nhập
-
   const [isDropdownVisible, setIsDropdownVisible] = useState(false); // Quản lý việc hiển thị box thông tin người dùng
 
+  const [isLoggedIn, setIsLoggedIn] = useState(true); // Quản lý trạng thái đăng nhập, mặc định là chưa đăng nhập
   const [userInfo, setUserInfo] = useState({
     avatar: '/vnglogo.png', // URL avatar người dùng (nếu có), có thể thay thế bằng ảnh thật
     name: 'Nguyễn Văn A',
     email: 'user@example.com'  // Email người dùng (chỉ khi đăng nhập)
   });
 
-  const handleSwitchToRecruiter = () => {
-    setRole('recruiter'); 
+  const handleSwitchToUser = () => {
+    setRole('user'); 
   };
 
   const handleAvatarClick = () => {
@@ -58,16 +57,15 @@ const NavBar = ({ role, setRole }) => {
       {/* Menu */}
       <div className='menu flex gap-8 sm:w-full md:w-auto sm:flex-col md:flex-row'>
         <Link to="/" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Trang chủ</Link>
-        <Link to="/cv" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Hồ sơ & CV</Link>
+        <Link to="/create" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Tạo công việc</Link>
         <Link to="/job" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Công việc</Link>
-        <Link to="/status" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Trạng thái</Link>
-        <Link to="/favorite" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Yêu thích</Link>
+        <Link to="/candidate" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Ứng viên</Link>
         {!isLoggedIn ? (
           // Chưa đăng nhập
           <>
             <li className="menuList text-[#6f6f6f] text-blue-500 hover:text-white hover:bg-black hover:rounded-[20px]  p-2"><strong>Đăng nhập/Đăng ký</strong></li>
             <li className="menuList text-[#6f6f6f] border-2 border-black rounded-[20px] hover:text-white hover:bg-black hover:rounded-[17px] text-black p-2"
-            onClick={handleSwitchToRecruiter}>Nhà tuyển dụng</li>
+            onClick={handleSwitchToUser}>Người dùng</li>
           </>
         ) : (
           // Sau đăng nhập
