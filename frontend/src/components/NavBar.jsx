@@ -107,7 +107,7 @@ const NavBar = () => {
 
         {/* Box thông tin người dùng (hiển thị khi nhấp vào avatar) */}
         {isLoggedIn && isDropdownVisible && (
-        <div className="absolute top-[50px] right-0 bg-white border-2 border-gray-300 rounded-lg w-[250px] shadow-md p-4">
+        <div className="absolute top-[50px] right-0 bg-white border-2 border-gray-300 rounded-lg w-[250px] shadow-md p-4 z-9999">
           <div className="flex flex-col items-center gap-3 mb-4">
             {/* Avatar lớn */}
             <img
