@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { AiOutlineSearch } from "react-icons/ai";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 //classname icon at aioutlinesearch when hover is click
+import AdvSearch from './AdvSearch';
 
 const Search = () => {
   const [inputValue, setInputValue] = useState(""); // State để theo dõi giá trị trong input
@@ -14,14 +15,40 @@ const Search = () => {
   const handleClear = () => {
     setInputValue(""); // Xóa giá trị trong input khi nhấn icon
   };
+
+  //Nhấn tìm kiếm nâng cao
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen); 
+  };
+
   return (
     <div className='searchDiv grid gp-10 bg-greyIsh rounded-[30px] p-[1rem] w-[90%] m-auto '>
       <form action=''></form>
       <div className='firstDiv flex justify-between items-center rounded-[30px] gap-[10px] bg-white p-5 shadow-lg shadow-greyIsh-700'>
         {/*Div chứa tìm kiếm nâng cao*/}
-          <div className='advancedSearch flex flex-col items-center justify-center bg-black rounded-[30px] text-center text-white p-2 w-[130px] cursor-pointer hover:bg-gray-500'> 
-              Tìm kiếm nâng cao
+          <div className="advancedSearch flex flex-col items-center justify-center bg-black rounded-[30px] text-center text-white p-2 w-[130px] cursor-pointer hover:bg-gray-500">
+            <button onClick={toggleModal}>Tìm kiếm nâng cao</button>
           </div>
+
+          {/* Overlay and AdvSearch Modal */}
+          {isModalOpen && (
+            <>
+              {/* Overlay */}
+              <div
+                className="fixed inset-0 bg-black bg-opacity-50 z-40"
+                onClick={toggleModal} // Close modal when clicking outside
+              ></div>
+
+              {/* Modal */}
+              <div
+                className="fixed inset-0 flex justify-center items-center z-50 transition-all duration-300 opacity-100"
+              >
+                <AdvSearch setIsModalOpen={setIsModalOpen} /> {/* Truyền setIsModalOpen cho AdvSearch */}
+              </div>
+            </>
+          )}
+
         {/* Line dọc ngăn cách giữa tìm kiếm và advanced search */}
         <div className='border-l-2 border-black h-[40px] mx-2'></div>
         {/* Div chứa input */}

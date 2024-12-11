@@ -39,6 +39,21 @@ const NavBar = () => {
     window.location.href = 'http://localhost:8080/jobseeker/auth/google';
   };
 
+  // State để kiểm tra xem danh sách thông báo có mở hay không
+  const [isOpen, setIsOpen] = useState(false);
+  // State để lưu trữ danh sách thông báo
+  const [notifications, setNotifications] = useState([
+    "Có một công việc mới phù hợp với bạn từ Công ty XYZ.",
+    "Bạn có một tin nhắn mới từ nhà tuyển dụng HCMUT.",
+    "Đừng quên hoàn thành hồ sơ ứng tuyển của bạn trước 13/12/2024 nhé!"
+  ]);
+
+  // Hàm xử lý khi bấm vào chuông
+  const handleBellClick = () => {
+    setIsOpen(!isOpen); // Mở/đóng danh sách thông báo
+  };
+    
+
   return (
     <div className='navBar flex flex-wrap justify-between items-center p-[2rem] w-[90%] m-auto'>
       <div className="logoDiv flex items-center gap-4 w-full sm:w-auto">
@@ -63,9 +78,30 @@ const NavBar = () => {
           </>
         ) : (
           <>
-            <li className="menuList text-[#6f6f6f] cursor-pointer p-2">
-              <AiOutlineBell className="text-[25px]" />
-            </li>
+            <div className="relative">
+              <li className="menuList text-[#6f6f6f] cursor-pointer p-2" onClick={handleBellClick}>
+                <AiOutlineBell className="text-[25px]" />
+                
+                {/* Dấu chấm đỏ nếu có thông báo */}
+                {notifications.length > 0 && (
+                  <span className="absolute top-0 right-0 bg-red-500 w-3 h-3 rounded-full"></span>
+                )}
+              </li>
+
+              {/* Hộp thông báo */}
+              {isOpen && notifications.length > 0 && (
+                <div className="absolute top-10 right-0 bg-white border-2 border-gray-300 rounded-[20px] p-4 shadow-lg w-[250px]">
+                  <h3 className="font-semibold text-lg">Thông báo</h3>
+                  <ul className="mt-2 text-sm">
+                    {notifications.map((notification, index) => (
+                      <li key={index} className="py-2 border-b">
+                        {notification}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
             <li className="menuList text-[#6f6f6f] cursor-pointer p-2 flex items-center gap-2" onClick={handleAvatarClick}>
               <img
                 src={userInfo.avatar || ''}
@@ -79,37 +115,49 @@ const NavBar = () => {
         )}
 
         {isLoggedIn && isDropdownVisible && (
-          <div className="absolute top-[50px] right-0 bg-white border-2 border-gray-300 rounded-lg w-[250px] shadow-md p-4">
-            <div className="flex flex-col items-center gap-3 mb-4">
-              <img
-                src={userInfo.avatar || ''}
-                alt="User Avatar"
-                className="w-[80px] h-[80px] rounded-full object-cover"
-              />
-              <div className="text-center">
-                <h2 className="font-semibold">{userInfo.name}</h2>
-                <p className="text-sm text-gray-500">{userInfo.email}</p>
-              </div>
+        <div className="absolute top-[50px] right-0 bg-white border-2 border-gray-300 rounded-lg w-[250px] shadow-md p-4 z-9999">
+          <div className="flex flex-col items-center gap-3 mb-4">
+            {/* Avatar lớn */}
+            <img
+              src={userInfo.avatar || ''} 
+              alt="User Avatar"
+              className="w-[80px] h-[80px] rounded-full object-cover"
+            />
+            {/* Tên và email */}
+            <div className="text-center">
+              <h2 className="font-semibold">{userInfo.name}</h2>
+              <p className="text-sm text-gray-500">{userInfo.email}</p>
             </div>
-            <ul className="space-y-2 items-center text-center">
-              <Link to="/jobseeker/profile" className="cursor-pointer text-gray-700 hover:text-blue-500 py-2">Hồ sơ</Link>
-              <li className="cursor-pointer text-gray-700 hover:text-blue-500 py-2">Cài đặt</li>
-              <li 
-                className="cursor-pointer text-red-500 hover:text-red-600 flex items-center justify-center gap-2 py-2"
-                onClick={handleLogout}
-              >
-                <MdLogout className="text-lg" />
-                Đăng xuất
-              </li>
-              <li
-                className="cursor-pointer text-gray-700 hover:text-blue-500 py-2"
-                onClick={() => setIsDropdownVisible(false)}
-              >
-                Thoát
-              </li>
-            </ul>
           </div>
-        )}
+
+          {/* Các tính năng */}
+          <ul className="space-y-2 items-center text-center">
+            {/* Link đến trang profile */}
+            <li>
+              <Link to="/profile" className="cursor-pointer text-gray-700 hover:text-blue-500 py-2">
+                Hồ sơ
+              </Link>
+            </li>
+
+            {/* Các mục khác trong dropdown */}
+            <li className="cursor-pointer text-gray-700 hover:text-blue-500 py-2">Cài đặt</li>
+            <li 
+              className="cursor-pointer text-red-500 hover:text-red-600 flex items-center justify-center gap-2 py-2"
+              onClick={handleLogout}
+            >
+              <MdLogout className="text-lg" />
+              Đăng xuất
+            </li>
+            <li
+              className="cursor-pointer text-gray-700 hover:text-blue-500 py-2"
+              onClick={() => setIsDropdownVisible(false)} // Ẩn dropdown khi click vào "Thoát"
+            >
+              Thoát
+            </li>
+          </ul>
+          
+        </div>
+      )}
       </div>
     </div>
   );

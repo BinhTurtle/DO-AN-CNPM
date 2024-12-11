@@ -10,31 +10,44 @@ import Status from './components/Status';
 import Footer from './components/Footer';
 import ImgBg from './components/ImgBg';
 import CompDetail from './components/CompDetail';
-import Profile from './components/Profile';
 import Register from './components/register';
 import { UserProvider } from './userContext/userContext';
+import Profile from './components/Profile'
 
 const App = () => {
   return (
-    <UserProvider>
-      <Router>
-        <div className="bg-white">
-          <NavBar />
-          <ImgBg />
-          <Routes>
-            <Route path="/jobseeker" element={<Home />} />
-            <Route path="/recruiter" element={<Home />} />
-            <Route path="/jobseeker/profile" element={<Profile />} />
-            <Route path="/jobseeker/job" element={<Job />} />
-            <Route path="/jobseeker/favorite" element={<Favor />} />
-            <Route path="/jobseeker/status" element={<Status />} />
-            <Route path="/jobseeker/register" element={<Register />} />
-            <Route path="/jobDetail/:id" element={<CompDetail />} />
-          </Routes>
-          <Footer />
-        </div>
-      </Router>
-    </UserProvider>
+    //<UserProvider>
+    <Router>
+      <div className="bg-white">
+        {/* NavBar luôn hiển thị ở tất cả các trang */}
+        <NavBar />
+        <ImgBg/>
+        <Routes>
+          {/* Trang chủ */}
+          <Route path="/" element={<Home />} />
+
+          {/* Trang hồ sơ */}
+          <Route path="/cv" element={<CV />} />
+
+          {/* Trang công việc */}
+          <Route path="/job" element={<Job />} />
+
+          {/* Trang yêu thích */}
+          <Route path="/favorite" element={<Favor />} />
+
+          {/* Trang trạng thái */}
+          <Route path="/status" element={<Status />} />
+
+          {/* Trang Công ty */}
+          <Route path="/companyDetail" element={<CompDetail />} />
+
+          <Route path="/profile" element={<Profile />} />
+
+        </Routes>
+        <Footer /> {/* Footer có thể hiển thị dưới tất cả các trang */}
+      </div>
+    </Router>
+    //</UserProvider>
   );
 };
 

@@ -307,19 +307,29 @@ const CompDetail = () => {
           </div>
         </div>
 
-        <div className="LocationDiv flex flex-col gap-4 p-4">
-          {/* Tiêu đề */}
-          <div className="flex items-center text-xl ml-4 font-bold">
-            <IoHomeOutline className="ml-2 text-gray-500 text-xl mr-2" />
-            <span>Địa điểm làm việc</span>
-          </div>
+        <div className="p-6 bg-white border border-black rounded-[20px] shadow-md text-center h-fit w-[400px] relative">
+      {/* Nút báo cáo */}
+      <button
+        onClick={handleReportClick}
+        className="absolute top-3 right-3 text-red-500 hover:text-red-700 transition"
+      >
+        <FaFlag className="text-2xl" />
+      </button>
 
-          {/* Nội dung bullet list */}
-          <div className="flex-col gap-1 ml-10">
-            <div className="flex items-start">
-              <span className="text-xl font-bold text-black mr-2">•</span>
-              {jobDetail.data.detail.detailAddress}
-            </div>
+      {/* Nội dung chính */}
+      <div className="nameDiv">
+        <div className="w-[100px] h-[100px] mx-auto rounded-full border border-black flex items-center justify-center">
+          <img
+            src="/vng.logo.png"
+            alt="Company Logo"
+            className="w-[80%] h-[80%] object-contain"
+          />
+        </div>
+        <h2 className="text-xl font-semibold mt-4">Công ty TNHH Một Mình Anh</h2>
+        <div className="text-left mt-6">
+          <div className="flex items-center gap-2 mb-3">
+            <BiGridAlt className="text-gray-500 text-lg" /> 
+            <span className="text-lg font-bold">Lĩnh vực: <span className="font-medium">Công nghệ thông tin</span></span>
           </div>
         </div>
 
