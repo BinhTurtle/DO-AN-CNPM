@@ -12,6 +12,7 @@ jobseekerRouter.route('/info').get(authenticate,jobseekerController.getUser)
 jobseekerRouter.route('/:id').get(articleController.getDetailArticle)
 jobseekerRouter.route('/:id/submitCV').post(authenticate,articleController.updateSubmitCVForArticle,jobseekerController.updateListArticle,notifyController.createApplicationNotificationForRecruiter)
 //Register
+jobseekerRouter.route('/info/CV').get(authenticate,jobseekerController.getListCV);
 jobseekerRouter.route('/info/uploadCV').post(authenticate,uploadMiddleware,jobseekerController.uploadCV);
 jobseekerRouter.route('/info/deleteCV/:CVId').delete(authenticate,jobseekerController.deleteCV);
 jobseekerRouter.route('/info/listApply').get(authenticate,jobseekerController.getListArticleApply);

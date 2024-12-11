@@ -122,7 +122,7 @@ const getArticlesByRecruiterId = async (recruiterId) => {
         throw new Error(error.message || "Failed to retrieve articles.");
     }
 };
-const updateSubmitCVForArticle = async (articleId, jobseekerId) => {
+const updateSubmitCVForArticle = async (articleId, jobseekerId, CVId) => {
     try {
       const user = await client
       .db("Account")
@@ -131,7 +131,7 @@ const updateSubmitCVForArticle = async (articleId, jobseekerId) => {
         { _id: new ObjectId(jobseekerId) },
         { projection: { CVProfile: 1, Name : 1, gender: 1, email: 1, } } 
       );
-      const selectedCV = user.CVProfile[0];
+      const selectedCV = user.CVProfile.find(cv => cv._id.toString() === CVId);
       console.log("CV",selectedCV)
       const newJobseeker = {
         id: new ObjectId(),

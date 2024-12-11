@@ -107,7 +107,8 @@ const getDetailArticle = async (req, res, next) => {
     try {
       const  articleId  = req.params.id; 
       const userId = req.user.id;
-    const result = await articleModel.updateSubmitCVForArticle(articleId,userId);
+      const CVID = req.body.CVID;
+      const result = await articleModel.updateSubmitCVForArticle(articleId,userId, CVID);
     next();
     // if (result) {
     //     return res.status(200).json({

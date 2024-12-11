@@ -53,6 +53,26 @@ const uploadCV = async (req, res, next) => {
       res.status(500).json({ message: `Có lỗi xảy ra khi xóa CV: ${error.message}` });
     }
   };
+  const getListCV = async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+  
+      if (!userId) {
+        return res.status(400).json({ message: 'userId không được cung cấp.' });
+      }
+  
+      const userCVList = await jobseekerModel.getListCV(userId)
+  
+      if (!userCVList || userCVList.length === 0) {
+        return res.status(200).json({ message: 'Người dùng chưa có CV nào.', CVProfile: [] });
+      }
+  
+      res.status(200).json({ message: 'Danh sách CV.', CVProfile: userCVList });
+    } catch (error) {
+      next(new Error(`Có lỗi xảy ra khi lấy danh sách CV: ${error.message}`));
+    }
+  };
+  
   
 const updateListArticle = async (req, res, next) => {
   try {
@@ -74,15 +94,20 @@ const updateListArticle = async (req, res, next) => {
   }
 };
 
-const getListArticleApply = async (req,res,next) => {
-  try{
-    const userId = req.user.id;
-   return jobseekerModel.getListArticleApply(userId)
-  }catch(error){
-    console.error('Error: ', error); 
-    res.send('lỗi');
+const getListArticleApply = async (req, res, next) => {
+  try {
+    const userId = req.user.id;  
+    const result = await jobseekerModel.getListArticleApply(userId); 
+    if (result.error) {
+      return res.status(500).json({ message: result.error }); 
+    }
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error('Error: ', error);
+    return res.status(500).json({ message: 'Lỗi khi lấy danh sách bài viết.' }); 
   }
-  }
+};
+
   const getFavouriteArticleController = async (req, res) => {
     try {
       const userId = req.user.id;
@@ -139,6 +164,7 @@ const getListArticleApply = async (req,res,next) => {
   export const jobseekerController = {
     uploadCV,
     deleteCV,
+    getListCV,
     updateListArticle,
     getUser,
     getListArticleApply,
