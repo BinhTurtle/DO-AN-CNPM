@@ -3,7 +3,6 @@ import {client} from '../../config/mongoDB.js'
 import fs from 'fs';
 import { articleModel } from '../articleModel.js';
 import { ObjectId } from 'mongodb';
-
 const getUser = async (id) => {
   try {
     const user = await client

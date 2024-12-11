@@ -1,20 +1,52 @@
 import { articleModel } from "../model/articleModel.js";
-import session from "express-session";
-import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { ObjectId } from "mongodb";
-
 const createJobApplication = async (req,res,next) => {
-
+  try{
+ const userId = req.user.id;
+ const newJobApplication = await articleModel.createJobApplication(userId,req.body);
+ if (!newJobApplication) {
+  return res.status(404).json({ message: "Article not found" });
 }
-const deleteJobApplication = async (req,res,next) => {
-    
+res.status(200).json({ message: "Article created", data: newJobApplication });
+  }catch (error) {
+    console.error('Error fetching articles:', error);
+    res.status(500).json({ message: 'An error occurred while creating jobapplication' });
+  }
 }
+const deleteJobApplication = async (req, res, next) => {
+  try {
+    const jobId = req.params.id; 
 
-const updateJobApplication = async (req,res,next) => {
-    
-}
+    if (!jobId) {
+      return res.status(400).json({ success: false, message: "Job ID is required" });
+    }
+    await articleModel.deleteJobApplication(jobId);
+    return res.status(200).json({ success: true, message: "Job post deleted successfully" });
+  } catch (error) {
+    console.error("Error during delete job post:", error);
+    return res.status(500).json({ success: false, message: error.message || "Server error" });
+  }
+};
 
+
+const updateJobApplication = async (req, res, next) => {
+  try {
+    const jobId = req.params.id;
+    const data = req.body;
+    const result = await jobApplicationModel.updateJobApplication(jobId, data);
+    return res.status(200).json({
+      success: true,
+      message: result.message,
+    });
+  } catch (error) {
+    console.error("Error updating job application:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to update job application",
+    });
+  }
+};
 const getAllArticle = async (req,res,next) => {
     try {
         const articles = await articleModel.getAllArticle();
@@ -27,7 +59,6 @@ const getAllArticle = async (req,res,next) => {
         res.status(500).json({ message: 'An error occurred while fetching articles' });
       }
 }
-
 const getArticlesByRecruiterId = async (req, res) => {
   try {
     const recruiterId  = req.user.id;
