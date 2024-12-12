@@ -66,8 +66,6 @@ if (result.matchedCount === 0) {
 }
 return { message: "CV profile updated successfully", userId: userId };
 }
-
-
 const updateListArticle = async (userId, articleId) => {
   try {
     const result = await client
@@ -75,20 +73,19 @@ const updateListArticle = async (userId, articleId) => {
       .collection("Job Seeker")
       .updateOne(
         { _id: new ObjectId(userId) },
-        { $addToSet: { ApplyList: new ObjectId(articleId) } }
+        { $addToSet: { ApplyList: new ObjectId(articleId) } } // Sử dụng $addToSet để tránh trùng lặp
       );
+
     if (result.modifiedCount === 0) {
-      return { message: "Article already in ApplyList" };
+      return { success: false, message: "Article already in ApplyList" };
     }
-    return { message: "Article added to ApplyList successfully" };
+    return { success: true, message: "Article added to ApplyList successfully" };
 
   } catch (error) {
     console.error("Error updating ApplyList:", error);
     throw new Error(error.message || "Failed to update ApplyList.");
   }
 };
-
-
 const getListArticleApply = async (userId) => {
   try {
     const List = await client

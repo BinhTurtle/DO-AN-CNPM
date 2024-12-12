@@ -2,9 +2,39 @@ import Joi from 'joi'
 import {client} from '../config/mongoDB.js'
 import fs from 'fs';
 import { ObjectId } from 'mongodb';
-const createJobApplication = async(recruiterId) => {
-
-}
+const createJobApplication = async(recruiterId, data) => {
+  try {
+    if (
+      !data.title ||
+      !data.salary ||
+      !data.address ||
+      !data.detail
+    ) {
+      throw new Error("Missing required fields");
+    }
+    const newArticle = {
+      _id: new ObjectId(),
+      recruiterId: new ObjectId(recruiterId),
+      title: data.title,
+      salary: data.salary,
+      address: data.address,
+      detail: data.detail,
+      jobseekerList: {
+        quantity: 0,
+        list:[], 
+      },
+      createdAt: new Date(),
+    };
+    const result = await client
+      .db("RecruitmentArticledatabase")
+      .collection("Article")
+      .insertOne(newArticle);
+    return result.ops[0];
+  } catch (error) {
+    console.error("Error creating job application:", error.message);
+    throw new Error(error.message);
+  }
+};
 const deleteJobApplication = async (jobId) =>{
     try {
         const result = await client.db("RecruitmentArticledatabase").collection("Article").deleteOne(
@@ -14,19 +44,35 @@ const deleteJobApplication = async (jobId) =>{
         if (result.deletedCount === 0) {
             throw new Error("Job post not found");
         }
-
-        return {
-            message: "Job post deleted successfully",
-            jobId,
-        };
+        return;
     } catch (error) {
         console.error("Error deleting job post:", error);
         throw new Error(error.message || "Failed to delete job post.");
     }
 }
-const updateJobApplication = async (jobId, jobseekerId) => {
-   
+const updateJobApplication = async (jobId, data) => {
+  try {
+    const updateFields = {
+      ...(data.title && { title: data.title }),
+      ...(data.salary && { salary: data.salary }),
+      ...(data.address && { address: data.address }),
+      ...(data.detail && { detail: data.detail }),
+    };
+
+    const result = await client
+      .db("RecruitmentArticledatabase")
+      .collection("Article")
+      .updateOne({ _id: new ObjectId(jobId) }, { $set: updateFields });
+    if (result.matchedCount === 0) {
+      throw new Error("Job post not found");
+    }
+    return { success: true, message: "Job post updated successfully" };
+  } catch (error) {
+    console.error("Error updating job post:", error);
+    throw new Error(error.message || "Failed to update job post.");
+  }
 };
+
 const getAllArticle = async () => {
     try {
    const allArticle = await client.db("RecruitmentArticledatabase")
@@ -37,9 +83,7 @@ const getAllArticle = async () => {
    return allArticle;
   } catch (err) {
     console.error(err);
-  } finally {
-    await client.close();
-  }
+  } 
   }
 const getDetailArticle = async (Id) => {
     try {
@@ -51,8 +95,6 @@ const getDetailArticle = async (Id) => {
     return article;
   } catch (err) {
     console.error(err);
-  } finally {
-    await client.close();
   }
   }
 const getArticlesByRecruiterId = async (recruiterId) => {
@@ -89,7 +131,7 @@ const updateSubmitCVForArticle = async (articleId, jobseekerId,data) => {
         { projection: { CVProfile: 1 } } 
       );
       const selectedCV = user.CVProfile[0];
-      console.log("CV",user)
+      console.log("CV",selectedCV)
       const newJobseeker = {
         id: new ObjectId(),
         userId: jobseekerId,
@@ -106,7 +148,7 @@ const updateSubmitCVForArticle = async (articleId, jobseekerId,data) => {
         .updateOne(
           { _id: new ObjectId(articleId) }, 
           {
-            $inc: { "jobseekerList.quantity": 1 },
+            $set: { "jobseekerList.quantity": 1 },
             $push: { "jobseekerList.list": newJobseeker }, 
           }
         );

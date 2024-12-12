@@ -2,16 +2,18 @@
 //want import use <NAME enter 
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './components/Home'
+import Home from './components/Home';
 import NavBar from './components/NavBar';
 import NavBar_Cruit from './components/NavBar_Cruit';
 import CV from './components/CV';
 import Job from './components/Job';
-import Favor from './components/Favor'
-import Status from './components/Status'
+import Favor from './components/Favor';
+import Status from './components/Status';
 import Footer from './components/Footer';
-import ImgBg from './components/ImgBg'
+import ImgBg from './components/ImgBg';
 import CompDetail from './components/CompDetail';
+import Register from './components/register';
+import { UserProvider } from './userContext/userContext';
 import Profile from './components/Profile'
 import CreateJob from './components/CreateJob';
 import Candidate from './components/Candidate';
@@ -22,6 +24,7 @@ const App = () => {
   const [role, setRole] = useState('user'); // Quản lý vai trò ('user' hoặc 'recruiter')
 
   return (
+    //<UserProvider>
     <Router>
       <div className="bg-white">
         {/* Hiển thị NavBar tương ứng */}
@@ -58,8 +61,8 @@ const App = () => {
         <Footer /> {/* Footer có thể hiển thị dưới tất cả các trang */}
       </div>
     </Router>
+    //</UserProvider>
   );
 };
 
-
-export default App
+export default App;

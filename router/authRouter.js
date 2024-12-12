@@ -23,11 +23,12 @@ authRouter.get('/recruiter/auth/google/callback',
 authRouter.get('/recruiter/auth/google/callback/success', authController.googleAuthCallbackRecruiter);
 authRouter.get('/recruiter/auth/google/callback/failure', authController.authFailure)
 //Login
-authRouter.route('/login').post(authController.signIn)
+authRouter.route('/jobseeker/login').post(authController.signInWithJobseeker);
 //Register
-authRouter.route('/register').post(authController.signUp)
+authRouter.route('/jobseeker/register').post(authController.signUpWithJobseeker);
 // authRouter.route('/').get(articleModel.getAllArticle)
-authRouter.route('/logout').post(authController.logOut)
+authRouter.route('/jobseeker/logout').post(authController.logOut);
+authRouter.route('/recruiter/logout').post(authController.logOut);
+
 //operation
-// authRouter.route('/Info/uploadCV').post(authController.uploadCV)
 export default authRouter

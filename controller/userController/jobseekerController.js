@@ -41,16 +41,25 @@ const uploadCV = async (req, res, next) => {
     }
   };
   
-const updateListArticle = async (req,res,next) => {
-try{
-  const userId = req.user.id;
-  const articleId = req.params.id
- return jobseekerModel.updateListArticle(userId,articleId)
-}catch(error){
-  console.error('Error during Submit:', error); 
-  res.send('lỗi');
-}
-}
+const updateListArticle = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const articleId = req.params.id;
+    if (!userId || !articleId) {
+      return res.status(400).json({ success: false, message: "Invalid userId or articleId" });
+    }
+    const result = await jobseekerModel.updateListArticle(userId, articleId);
+    if (result.success) {
+      return res.status(200).json(result);
+    } else {
+      return res.status(400).json(result);
+    }
+  } catch (error) {
+    console.error("Error during Submit:", error);
+    res.status(500).json({ success: false, message: error.message || "Server Error" });
+  }
+};
+
 const getListArticleApply = async (req,res,next) => {
   try{
     const userId = req.user.id;
