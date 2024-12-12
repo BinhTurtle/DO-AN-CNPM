@@ -1,53 +1,32 @@
-// src/components/NavBar.js
-import React, { useState } from 'react';
-import { AiOutlineBell } from 'react-icons/ai';
+import React, { useState, useEffect, useRef } from 'react';
+import { AiOutlineBell} from 'react-icons/ai';
 import { FaUserCircle } from 'react-icons/fa';
-import { MdLogout } from 'react-icons/md';
-import { Link, useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
-import UserContext from '../userContext/userContext';
-import axios from 'axios';
-
+import { MdLogout } from "react-icons/md";
+import { Link } from 'react-router-dom';  // Import Link để điều hướng giữa các trang
 
 const NavBar = ({ role, setRole }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Quản lý trạng thái đăng nhập, mặc định là chưa đăng nhập
-
   const [isDropdownVisible, setIsDropdownVisible] = useState(false); // Quản lý việc hiển thị box thông tin người dùng
 
+  const [isLoggedIn, setIsLoggedIn] = useState(true); // Quản lý trạng thái đăng nhập, mặc định là chưa đăng nhập
   const [userInfo, setUserInfo] = useState({
     avatar: '/vnglogo.png', // URL avatar người dùng (nếu có), có thể thay thế bằng ảnh thật
     name: 'Nguyễn Văn A',
     email: 'user@example.com'  // Email người dùng (chỉ khi đăng nhập)
   });
 
-  const handleSwitchToRecruiter = () => {
-    setRole('recruiter'); 
+  const handleSwitchToUser = () => {
+    setRole('user'); 
   };
 
   const handleAvatarClick = () => {
-    setIsDropdownVisible(!isDropdownVisible);
+    setIsDropdownVisible(!isDropdownVisible); // Khi nhấp vào avatar, toggle (hiển thị/ẩn) dropdown
   };
 
-  const handleLogout = async () => {
-    try {
-      const response = await axios.post('http://localhost:8080/jobseeker/logout');
-      
-      if (response.status === 200) {
-        alert("Bạn đã đăng xuất!");
-        logout();
-        setIsDropdownVisible(false);
-        navigate('/');
-      } else {
-        alert("Đăng xuất thất bại. Vui lòng thử lại.");
-      }
-    } catch (error) {
-      console.error('Lỗi khi đăng xuất:', error);
-      alert("Đăng xuất thất bại. Vui lòng thử lại.");
-    }
-  };
-
-  const handleLogin = async () => {
-    window.location.href = 'http://localhost:8080/jobseeker/auth/google';
+  const handleLogout = () => {
+    // Xử lý đăng xuất tại đây
+    alert("Bạn đã đăng xuất!");
+    setIsLoggedIn(false); // Cập nhật trạng thái đăng xuất
+    setIsDropdownVisible(false); // Ẩn dropdown khi đăng xuất
   };
 
   // State để kiểm tra xem danh sách thông báo có mở hay không
@@ -66,28 +45,30 @@ const NavBar = ({ role, setRole }) => {
     
 
   return (
-    <div className='navBar flex flex-wrap justify-between items-center p-[2rem] w-[90%] m-auto'>
+    <div className='navBar flex flex-wrap justify-between items-center p-[2rem] w-[90%] m-auto '>
+      {/* Logo và Thanh chọn */}
       <div className="logoDiv flex items-center gap-4 w-full sm:w-auto">
-        <img src="/logo.png" alt="Logo" className="logofinal w-[70px] h-[70px]" />
+       <img src="/logo.png" alt="Logo" className="logofinal w-[70px] h-[70px]" />
         <h1 className="logo text-[25px]">
           <span className="job-text">ITJOB</span><span className="search-text">Search</span>
         </h1>
       </div>
-
+  
+      {/* Menu */}
       <div className='menu flex gap-8 sm:w-full md:w-auto sm:flex-col md:flex-row'>
         <Link to="/" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Trang chủ</Link>
-        <Link to="/cv" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Hồ sơ & CV</Link>
-        <Link to="/jobseeker" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Công việc</Link>
-        <Link to="/jobseeker/status" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Trạng thái</Link>
-        <Link to="/jobseeker/favorite" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Yêu thích</Link>
-        
+        <Link to="/create" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Tạo công việc</Link>
+        <Link to="/job" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Công việc</Link>
+        <Link to="/candidate" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Ứng viên</Link>
         {!isLoggedIn ? (
+          // Chưa đăng nhập
           <>
-            <li className="menuList text-[#6f6f6f] text-blue-500 hover:text-white hover:bg-black hover:rounded-[20px] p-2" onClick={handleLogin}><strong>Đăng nhập/Đăng ký</strong></li>
+            <li className="menuList text-[#6f6f6f] text-blue-500 hover:text-white hover:bg-black hover:rounded-[20px]  p-2"><strong>Đăng nhập/Đăng ký</strong></li>
             <li className="menuList text-[#6f6f6f] border-2 border-black rounded-[20px] hover:text-white hover:bg-black hover:rounded-[17px] text-black p-2"
-            onClick={handleSwitchToRecruiter}>Nhà tuyển dụng</li>
+            onClick={handleSwitchToUser}>Người dùng</li>
           </>
         ) : (
+          // Sau đăng nhập
           <>
             <div className="relative">
               <li className="menuList text-[#6f6f6f] cursor-pointer p-2" onClick={handleBellClick}>
@@ -114,17 +95,20 @@ const NavBar = ({ role, setRole }) => {
               )}
             </div>
             <li className="menuList text-[#6f6f6f] cursor-pointer p-2 flex items-center gap-2" onClick={handleAvatarClick}>
+              {/* Avatar hoặc Icon người dùng */}
               <img
-                src={userInfo.avatar || ''}
+                src={userInfo.avatar || ''}  // Nếu có avatar thì dùng, nếu không thì dùng FaUserCircle
                 alt="User Avatar"
                 className="w-[30px] h-[30px] rounded-full object-cover"
                 style={{ objectFit: 'cover' }}
               />
+              {/* Nếu không có avatar, hiển thị icon mặc định */}
               {!userInfo.avatar && <FaUserCircle className="text-[#6f6f6f] text-[25px]" />}
             </li>
           </>
         )}
 
+        {/* Box thông tin người dùng (hiển thị khi nhấp vào avatar) */}
         {isLoggedIn && isDropdownVisible && (
         <div className="absolute top-[50px] right-0 bg-white border-2 border-gray-300 rounded-lg w-[250px] shadow-md p-4 z-9999">
           <div className="flex flex-col items-center gap-3 mb-4">
@@ -171,7 +155,7 @@ const NavBar = ({ role, setRole }) => {
       )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default NavBar;
+export default NavBar
