@@ -111,7 +111,7 @@ const getArticlesByRecruiterId = async (recruiterId) => {
             .db("RecruitmentArticledatabase")
             .collection("Article")
             .find({ recruiterId: new ObjectId(recruiterId) },
-            { projection: { title: 1, address: 1, _id: 1 } })
+            { projection: { title: 1, address: 1, _id: 1,nameCompany: 1, salary: 1,  } })
             .toArray();
         if (articles.length === 0) {
             return { message: "No articles found for this recruiter", recruiterId };

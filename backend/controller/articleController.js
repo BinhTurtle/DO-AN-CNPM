@@ -75,9 +75,7 @@ const getArticlesByRecruiterId = async (req, res) => {
         message: 'No articles found for this recruiter.',
       });
     }
-    return res.status(200).json({
-      articles: articles,
-    });
+    return res.status(200).json(articles);
   } catch (error) {
     console.error('Error fetching articles:', error);
     return res.status(500).json({

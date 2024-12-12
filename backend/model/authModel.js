@@ -88,35 +88,8 @@ const signInWithJobseeker = async (data) => {
     throw new Error(error.message || "Error during sign in");
   }
 };
-// const signUpWithRecruiter = async (data) => {
-//   try {
-//  const { error } = signUpSchema.validate(data);
-//     if (error) {
-//       throw new Error(error.details[0].message);
-//     }
-//     const existingUser = await client.db("Account").collection("Job Seeker").findOne({ email: data.email });
-//     if (existingUser) {
-//       throw new Error("User with this email already exists");
-//     }
-//     const newUser = {
-//       email: data.email,
-//       password: data.password,
-//       fullName: data.fullName,
-//       dateOfBirth: data.dateOfBirth,
-//       address: data.address,
-//       experience: data.experience,
-//       certifications: data.certifications,
-//       skills: data.skills,
-//       education: data.education,
-//       createdAt: new Date(),
-//       role: 'Jobseeker',
-//     };
-//     const result = await client.db("Account").collection("Job Seeker").insertOne(newUser);
-//     return result.ops[0];
-//   } catch (error) {
-//     throw new Error(error.message || "Error during sign up");
-//   }
-// };
+const signUpWithRecruiter = async (data) => {
+};
 
 const signInWithRecruiter = async (data) => {
   try {
@@ -124,7 +97,7 @@ const signInWithRecruiter = async (data) => {
     if (error) {
       throw new Error(error.details[0].message);
     }
-    const user = await client.db("Account").collection("Recruiterr").findOne({ email: data.email });
+    const user = await client.db("Account").collection("Recruiter").findOne({ email: data.email });
     if (!user) {
       throw new Error("Invalid email or password");
     }
@@ -156,6 +129,7 @@ const logout = async => {
 export const authModel = {
     signUpWithJobseeker,
     signInWithJobseeker,
+    signUpWithRecruiter,
     signInWithRecruiter,
     signInWithGoogleJobSeeker,
     signInWithGoogleRecruiter,

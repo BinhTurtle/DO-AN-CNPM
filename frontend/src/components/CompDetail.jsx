@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect,useContext } from "react";
+import { useNavigate,useParams } from "react-router-dom";
 import { SingleJob } from "./JobHome";
 import logo1 from "/company/vnglogo.png";
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
@@ -14,6 +14,7 @@ import { BiGridAlt } from "react-icons/bi";
 import { FaUsers } from "react-icons/fa";
 import { FaFlag } from "react-icons/fa";
 import axios from "axios";
+import UserContext from '../userContext/userContext';
 const CompDetail = () => {
   const [isReportOpen, setIsReportOpen] = useState(false); // Trạng thái mở/đóng modal báo cáo
   const [selectedReason, setSelectedReason] = useState(""); // Lý do báo cáo
@@ -27,6 +28,8 @@ const CompDetail = () => {
   const [isCVModalOpen, setIsCVModalOpen] = useState(false); // Trạng thái mở/đóng modal chọn CV
   const [cvList, setCVList] = useState([]); // Danh sách CV của người dùng
   const [selectedCVId, setSelectedCVId] = useState(null); // ID của CV được chọn
+  const { userInfo, isLoggedIn } = useContext(UserContext);
+  const navigate = useNavigate();
   const handleReportClick = () => {
     setIsReportOpen(true); // Mở modal báo cáo
   };
@@ -38,7 +41,6 @@ const CompDetail = () => {
   };
 
   const handleSubmitReport = () => {
-    // Xử lý gửi báo cáo tại đây
     alert(`Đã báo cáo thành công!`);
     setIsReportOpen(false);
   };
@@ -102,7 +104,30 @@ const CompDetail = () => {
     setIsCVModalOpen(false);
     setSelectedCVId(null);
   };
-
+  const handleEditClick = () => {
+    console.log("Sửa clicked");
+    alert("Chức năng sửa sẽ được triển khai!");
+  };
+  
+  const handleDeleteClick = () => {
+    console.log("Xóa clicked");
+    const confirmDelete = window.confirm("Bạn có chắc muốn xóa mục này?");
+    if (confirmDelete) {
+      console.log("Mục đã được xóa");
+      alert("Mục đã được xóa thành công!");
+    } else {
+      console.log("Hủy xóa mục");
+    }
+  };
+  
+  const handleViewCandidatesClick = () => {
+      if (id) {
+        navigate(`/recruiter/jobDetail/${id}/listJobseeker`);
+      } else {
+        alert("ID của bài viết không tồn tại!");
+      }
+    };
+  
   if (loading) return <div>Đang tải...</div>;
   if (error) return <div className="text-red-500">Lỗi: {error}</div>;
   const description = jobDetail?.data.detail.description || "";
@@ -186,69 +211,98 @@ const CompDetail = () => {
           </div>
 
           <div className="ButtonDiv flex gap-5 m-4">
-            {/* Nút Ứng tuyển ngay */}
-            <button
-              className="bg-blue-500 text-white py-2 px-6 rounded-[20px] hover:bg-blue-700 w-2/3"
-              onClick={handleApplyClick}
-            >
-              <span className="block transition-transform duration-150 hover:scale-110">
-                Ứng tuyển ngay
-              </span>
-            </button>
-          </div>
+  {userInfo?.role === 'Jobseeker' ? (
+    <>
+      {/* Nút Ứng tuyển ngay */}
+      <button
+        className="bg-blue-500 text-white py-2 px-6 rounded-[20px] hover:bg-blue-700 w-2/3"
+        onClick={handleApplyClick}
+      >
+        <span className="block transition-transform duration-150 hover:scale-110">
+          Ứng tuyển ngay
+        </span>
+      </button>
 
-          {/* Modal chọn CV */}
-          {isCVModalOpen && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white w-[90%] md:w-[500px] p-6 rounded-[20px] shadow-lg">
-                <h2 className="text-xl font-semibold mb-4">
-                  Chọn CV để ứng tuyển
-                </h2>
+      {/* Modal chọn CV */}
+      {isCVModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white w-[90%] md:w-[500px] p-6 rounded-[20px] shadow-lg">
+            <h2 className="text-xl font-semibold mb-4">Chọn CV để ứng tuyển</h2>
 
-                <div className="mb-4">
-                  {cvList.length > 0 ? (
-                    <ul className="space-y-2">
-                      { cvList.map((cv, index) => (
-                        <li key={cv._id} className="flex items-center gap-4">
-                          <input
-                            type="radio"
-                            name="cv"
-                            value={cv._id}
-                            onChange={() => setSelectedCVId(cv._id)}
-                          />
-                          <span>{cv.name}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-gray-500">Bạn chưa có CV nào.</p>
-                  )}
-                </div>
-
-                <div className="flex justify-end gap-3">
-                  <button
-                    className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400"
-                    onClick={handleCloseCVModal}
-                  >
-                    Hủy
-                  </button>
-                  <button
-                    className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600"
-                    onClick={handleSubmitCV}
-                  >
-                    Nộp CV
-                  </button>
-                </div>
-              </div>
+            <div className="mb-4">
+              {cvList.length > 0 ? (
+                <ul className="space-y-2">
+                  {cvList.map((cv, index) => (
+                    <li key={cv._id} className="flex items-center gap-4">
+                      <input
+                        type="radio"
+                        name="cv"
+                        value={cv._id}
+                        onChange={() => setSelectedCVId(cv._id)}
+                      />
+                      <span>{cv.name}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-gray-500">Bạn chưa có CV nào.</p>
+              )}
             </div>
-          )}
 
-          {/* Nút "Yêu thích" */}
-          <button className="border-2 border-black py-2 px-4 rounded-[20px] hover:text-white hover:bg-black w-1/3">
-            <span className="block transition-transform duration-150 hover:scale-110">
-              Yêu thích
-            </span>
-          </button>
+            <div className="flex justify-end gap-3">
+              <button
+                className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400"
+                onClick={handleCloseCVModal}
+              >
+                Hủy
+              </button>
+              <button
+                className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600"
+                onClick={handleSubmitCV}
+              >
+                Nộp CV
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Nút "Yêu thích" */}
+      <button className="border-2 border-black py-2 px-4 rounded-[20px] hover:text-white hover:bg-black w-1/3">
+        <span className="block transition-transform duration-150 hover:scale-110">
+          Yêu thích
+        </span>
+      </button>
+    </>
+  ) : userInfo?.role === 'Recruiter' ? (
+    <>
+      {/* Nút sửa */}
+      <button
+        className="bg-yellow-500 text-white py-2 px-10 rounded-[20px] hover:bg-yellow-600"
+        onClick={handleEditClick}
+      >
+        Sửa
+      </button>
+
+      {/* Nút xóa */}
+      <button
+        className="bg-red-500 text-white py-2 px-10 rounded-[20px] hover:bg-red-600"
+        onClick={handleDeleteClick}
+      >
+        Xóa
+      </button>
+
+      {/* Nút danh sách ứng viên */}
+      <button
+        className="bg-green-500 text-white py-2 px-10 rounded-[20px] hover:bg-green-600"
+        onClick={handleViewCandidatesClick}
+      >
+        Danh sách ứng viên
+      </button>
+    </>
+  ) : null}
+</div>
+
           <div className="Chitiettuyendung text-xl font-bold flex justify-between items-center ml-4 mt-5">
           Chi tiết tuyển dụng
         </div>

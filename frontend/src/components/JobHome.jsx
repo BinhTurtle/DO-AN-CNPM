@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect,useContext } from 'react'
 import { IoHeartCircleOutline } from "react-icons/io5";
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import { IoLocationOutline } from "react-icons/io5";
@@ -11,13 +11,18 @@ import axios from 'axios';
 import { useLocation } from 'react-router-dom'; // Để lấy thông tin vị trí trang hiện tại
 //import logo company
 import logo1 from '/company/vnglogo.png';
+import UserContext from '../userContext/userContext';
 const SingleJob = ({ id,image, title, company, salary, location }) => {
-  
+  const { userInfo, isLoggedIn } = useContext(UserContext);
   const [isHoveredLove, setIsHoveredLove] = useState(false);
 
   const navigate = useNavigate(); 
   const handleJobClick = () => {
-    navigate(`/jobDetail/${id}`);
+    if (userInfo?.role === 'Jobseeker') {
+      navigate(`/jobseeker/jobDetail/${id}`);
+    } else if (userInfo?.role === 'Recruiter') {
+      navigate(`/recruiter/jobDetail/${id}`);
+    }
   };
   return (
     <div 
@@ -55,7 +60,6 @@ const SingleJob = ({ id,image, title, company, salary, location }) => {
     </div>
   );
 };
-
 const JobHome = () => {
   const [jobs, setJobs] = useState([]); // State lưu danh sách công việc
   const [loading, setLoading] = useState(true); // State theo dõi trạng thái loading
@@ -65,8 +69,9 @@ const JobHome = () => {
   const [showOptions, setShowOptions] = useState(false);  // Điều khiển việc hiển thị lựa chọn bộ lọc
   const [selectedOptions, setSelectedOptions] = useState([]);  // Lưu các lựa chọn đã chọn
 
-  const location = useLocation(); // Lấy vị trí trang hiện tại
-  const isHomePage = location.pathname === '/'; // Kiểm tra xem đây có phải là trang chủ hay không
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+  const { userInfo, isLoggedIn } = useContext(UserContext);
 
   // Các bộ lọc có thể chọn
   const filters = ["Kinh nghiệm", "Địa điểm", "Mức lương", "Lĩnh vực", "Phương thức làm việc", "Hình thức làm việc"];
@@ -107,9 +112,15 @@ const JobHome = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/jobseeker', {
-          withCredentials: true,  
-        });
+        if (!userInfo) {
+          setError('Vui lòng đăng nhập để xem công việc.');
+          setLoading(false);
+          return;
+        }
+        const response = await axios.get(
+          userInfo.role === 'Jobseeker' ? 'http://localhost:8080/jobseeker' : 'http://localhost:8080/recruiter', 
+          { withCredentials: true }
+        );
         setfetch("đã thực hiện lấy data");
         setJobs(response.data); 
       } catch (error) {
@@ -128,7 +139,7 @@ const JobHome = () => {
     <div className='w-[90%] m-auto'>
       <div className='TitleJobsection text-[30px] flex mt-5 justify-between items-center'> 
         {/* Hiển thị "Việc làm tốt nhất" nếu ở trang chủ, nếu không hiển thị "Yêu thích của tôi" */}
-        <span>{isHomePage ? 'Việc làm tốt nhất' : 'Yêu thích của tôi'}</span>
+        <span>Các công việc hiện tại</span>
         <span className='Dieuhuong flex items-center'>
               {/* Icon left */}
               <div 
@@ -218,7 +229,6 @@ const JobHome = () => {
       />
     ))
   ) : (
-    // Hiển thị thông báo nếu không có công việc
     <div>Không có công việc phù hợp</div>
   )}
 </div>

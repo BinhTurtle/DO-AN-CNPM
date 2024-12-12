@@ -70,6 +70,7 @@ const getDetailCV = async (articleId,cvId) => {
    if (!article || !article.jobseekerList || !article.jobseekerList.list) {
      throw new Error("Article or jobseeker list not found");
    }
+   console.log("CVId",cvId);
    const cv = article.jobseekerList.list.find((item) => item.id.toString() === cvId.toString());
    console.log("info CV" ,cv.cvInfo);
    if (!cv || !cv.cvInfo || !cv.cvInfo.cvFile.data) {

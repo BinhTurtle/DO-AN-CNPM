@@ -72,14 +72,11 @@ const getDetailCV = async (articleId,cvId) => {
      throw new Error("Article or jobseeker list not found");
    }
    const cv = article.jobseekerList.list.find((item) => item.id.toString() === cvId.toString());
-   console.log("info CV" ,cv.cvInfo);
    if (!cv || !cv.cvInfo || !cv.cvInfo.cvFile.data) {
      throw new Error("CV file not found");
    }
    return {
-     data: cv.cvInfo.cvFile.data,
-     contentType: cv.cvInfo.cvFile.contentType,
-     name: cv.cvInfo.name,
+     data: cv.cvInfo.cvFile.data
    };
  } catch (error) {
    console.error("Error fetching CV from DB:", error.message);

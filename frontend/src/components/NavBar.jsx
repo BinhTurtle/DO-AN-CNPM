@@ -11,6 +11,7 @@ import axios from 'axios';
 const NavBar = () => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const { userInfo, isLoggedIn, logout } = useContext(UserContext);
+  const linkPath = userInfo?.role === 'recruiter' ? '/recruiter' : '/jobseeker';
   const navigate = useNavigate();
 
   const handleAvatarClick = () => {
@@ -35,10 +36,12 @@ const NavBar = () => {
     }
   };
 
-  const handleLogin = async () => {
+  const handleLoginJobseeker = async () => {
     window.location.href = 'http://localhost:8080/jobseeker/auth/google';
   };
-
+  const handleLoginRecruiter = async () => {
+    window.location.href = 'http://localhost:8080/recruiter/auth/google';
+  };
   return (
     <div className='navBar flex flex-wrap justify-between items-center p-[2rem] w-[90%] m-auto'>
       <div className="logoDiv flex items-center gap-4 w-full sm:w-auto">
@@ -49,17 +52,28 @@ const NavBar = () => {
       </div>
 
       <div className='menu flex gap-8 sm:w-full md:w-auto sm:flex-col md:flex-row'>
-        <Link to="/" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Trang chủ</Link>
-        <Link to="/cv" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Hồ sơ & CV</Link>
-        <Link to="/jobseeker" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Công việc</Link>
-        <Link to="/jobseeker/status" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Trạng thái</Link>
-        <Link to="/jobseeker/favorite" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Yêu thích</Link>
+      <Link to="/" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Trang chủ</Link>
+        
+        {userInfo?.role === 'Recruiter' ? (
+          <>
+            <Link to="/recruiter" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Công việc</Link>
+            <Link to="/recruiter/createJob" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Đăng việc</Link>
+            <Link to="/recruiter/favourite" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Yêu thích</Link>
+          </>
+        ) : (
+          <>
+            <Link to="/jobseeker" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Công việc</Link>
+            <Link to="/cv" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Hồ sơ & CV</Link>
+            <Link to="/jobseeker/status" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Trạng thái</Link>
+            <Link to="/jobseeker/favorite" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Yêu thích</Link>
+          </>
+        )}
         
         {!isLoggedIn ? (
           <>
-            <li className="menuList text-[#6f6f6f] text-blue-500 hover:text-white hover:bg-black hover:rounded-[20px] p-2" onClick={handleLogin}><strong>Đăng nhập/Đăng ký</strong></li>
+            <li className="menuList text-[#6f6f6f] text-blue-500 hover:text-white hover:bg-black hover:rounded-[20px] p-2" onClick={handleLoginJobseeker}><strong>Đăng nhập/Đăng ký</strong></li>
             <li className="menuList text-[#6f6f6f] border-2 border-black rounded-[20px] hover:text-white hover:bg-black hover:rounded-[17px] text-black p-2"
-            onClick={handleAvatarClick}>Nhà tuyển dụng</li>
+            onClick={handleLoginRecruiter}>Nhà tuyển dụng</li>
           </>
         ) : (
           <>
@@ -68,7 +82,7 @@ const NavBar = () => {
             </li>
             <li className="menuList text-[#6f6f6f] cursor-pointer p-2 flex items-center gap-2" onClick={handleAvatarClick}>
               <img
-                src={userInfo.avatar || ''}
+                src="/logo.png"
                 alt="User Avatar"
                 className="w-[30px] h-[30px] rounded-full object-cover"
                 style={{ objectFit: 'cover' }}
@@ -82,7 +96,7 @@ const NavBar = () => {
           <div className="absolute top-[50px] right-0 bg-white border-2 border-gray-300 rounded-lg w-[250px] shadow-md p-4">
             <div className="flex flex-col items-center gap-3 mb-4">
               <img
-                src={userInfo.avatar || ''}
+                src="/logo.png"
                 alt="User Avatar"
                 className="w-[80px] h-[80px] rounded-full object-cover"
               />
