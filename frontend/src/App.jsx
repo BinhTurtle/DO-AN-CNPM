@@ -18,8 +18,6 @@ import CreateJob from './components/CreateJob';
 import UserInfoDisplay from './components/user';
 import { UserProvider } from './userContext/userContext';
 import Profile from './components/Profile'
-import CreateJob from './components/CreateJob';
-import Candidate from './components/Candidate';
 
 const App = () => {
   const [isLogin, setIsLogin] = useState(false); // Quản lý trạng thái đăng nhập
