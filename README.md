@@ -2,9 +2,9 @@
 IT Job Search Platform
 
 ## Công nghệ sử dụng
--**Front-end**: ReactJS và Vite
--**Back-end**: NodeJS
--**Cơ sở dữ liệu**: MongoDB
+- **Front-end**: ReactJS và Vite
+- **Back-end**: Node.js
+- **Cơ sở dữ liệu**: MongoDB
 
 ## Hướng dẫn cài đặt hệ thống
 
