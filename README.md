@@ -10,7 +10,7 @@ IT Job Search Platform
 
 ### 1. Clone repository (nhánh cuối cùng của nhóm là fullcode)
 ```bash
-git clone https://github.com/BinhTurtle/DO-AN-CNPM
+git clone --branch fullCode https://github.com/BinhTurtle/DO-AN-CNPM
 ```
 ### 2. Dependencies
 NodeJS: Nếu chưa có NodeJS, tải và cài đặt từ trang chủ NodeJS.
