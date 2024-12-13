@@ -8,7 +8,7 @@ IT Job Search Platform
 
 ## Hướng dẫn cài đặt hệ thống
 
-### 1. Clone repository
+### 1. Clone repository (nhánh cuối cùng của nhóm là fullcode)
 ```bash
 git clone https://github.com/BinhTurtle/DO-AN-CNPM
 ```
