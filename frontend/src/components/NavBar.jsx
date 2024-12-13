@@ -54,6 +54,21 @@ const NavBar = () => {
     window.location.href = 'http://localhost:8080/recruiter/auth/google';
   };
 
+  // State để kiểm tra xem danh sách thông báo có mở hay không
+  const [isOpen, setIsOpen] = useState(false);
+  // State để lưu trữ danh sách thông báo
+  const [notifications, setNotifications] = useState([
+    "Có một công việc mới phù hợp với bạn từ Công ty XYZ.",
+    "Bạn có một tin nhắn mới từ nhà tuyển dụng HCMUT.",
+    "Đừng quên hoàn thành hồ sơ ứng tuyển của bạn trước 13/12/2024 nhé!"
+  ]);
+
+  // Hàm xử lý khi bấm vào chuông
+  const handleBellClick = () => {
+    setIsOpen(!isOpen); // Mở/đóng danh sách thông báo
+  };
+    
+
   return (
     <div className='navBar flex flex-wrap justify-between items-center p-[2rem] w-[90%] m-auto'>
       <div className="logoDiv flex items-center gap-4 w-full sm:w-auto">
@@ -133,25 +148,36 @@ const NavBar = () => {
                 <p className="text-sm text-gray-500">{userInfo.email}</p>
               </div>
             </div>
-            <ul className="space-y-2 items-center text-center">
-              <Link to="/jobseeker/profile" className="cursor-pointer text-gray-700 hover:text-blue-500 py-2">Hồ sơ</Link>
-              <li className="cursor-pointer text-gray-700 hover:text-blue-500 py-2">Cài đặt</li>
-              <li 
-                className="cursor-pointer text-red-500 hover:text-red-600 flex items-center justify-center gap-2 py-2"
-                onClick={handleLogout}
-              >
-                <MdLogout className="text-lg" />
-                Đăng xuất
-              </li>
-              <li
-                className="cursor-pointer text-gray-700 hover:text-blue-500 py-2"
-                onClick={() => setIsDropdownVisible(false)}
-              >
-                Thoát
-              </li>
-            </ul>
           </div>
-        )}
+
+          {/* Các tính năng */}
+          <ul className="space-y-2 items-center text-center">
+            {/* Link đến trang profile */}
+            <li>
+              <Link to="/profile" className="cursor-pointer text-gray-700 hover:text-blue-500 py-2">
+                Hồ sơ
+              </Link>
+            </li>
+
+            {/* Các mục khác trong dropdown */}
+            <li className="cursor-pointer text-gray-700 hover:text-blue-500 py-2">Cài đặt</li>
+            <li 
+              className="cursor-pointer text-red-500 hover:text-red-600 flex items-center justify-center gap-2 py-2"
+              onClick={handleLogout}
+            >
+              <MdLogout className="text-lg" />
+              Đăng xuất
+            </li>
+            <li
+              className="cursor-pointer text-gray-700 hover:text-blue-500 py-2"
+              onClick={() => setIsDropdownVisible(false)} // Ẩn dropdown khi click vào "Thoát"
+            >
+              Thoát
+            </li>
+          </ul>
+          
+        </div>
+      )}
       </div>
     </div>
   );

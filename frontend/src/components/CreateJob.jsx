@@ -1,5 +1,7 @@
+
 import React, { useState, useEffect, } from "react";
 import logo1 from "/company/vnglogo.png";
+import { SingleJob } from './JobHome'; // Import SingleJob từ JobHome
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import { IoLocateOutline, IoLocationOutline } from "react-icons/io5";
 import { GiSandsOfTime } from "react-icons/gi";
@@ -275,5 +277,6 @@ const CreateJob = () => {
     </div>
   );
 };
+
 
 export default CreateJob;
