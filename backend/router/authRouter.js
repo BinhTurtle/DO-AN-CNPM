@@ -27,8 +27,10 @@ authRouter.get('/recruiter/auth/google/callback/failure', authController.googleA
 authRouter.route('/jobseeker/login').post(authController.signInWithJobseeker);
 //Register
 authRouter.route('/jobseeker/register').post(authController.signUpWithJobseeker);
-// authRouter.route('/').get(articleModel.getAllArticle)
 authRouter.route('/jobseeker/logout').post(authController.logOut);
+// authRouter.route('/').get(articleModel.getAllArticle)
+authRouter.route('/recruiter/login').post(authController.signInWithRecruiter);
+authRouter.route('/recruiter/register').post(authController.signUpWithRecruiter);
 authRouter.route('/recruiter/logout').post(authController.logOut);
 
 //operation

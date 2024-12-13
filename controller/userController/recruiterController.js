@@ -42,16 +42,15 @@ const getListCVFromArticle = async (req,res,next) => {
             message: 'Article ID is required.',
           });
         }
-        const cvList = await recruiterModel.getListCVFromArticle(articleId);
-        if (cvList.length === 0) {
+        const cvJobseekerList = await recruiterModel.getListCVFromArticle(articleId);
+        if (cvJobseekerList.length === 0) {
           return res.status(404).json({
             success: false,
             message: 'No CVs found for this article.',
           });
         }
         return res.status(200).json({
-          success: true,
-          cvList: cvList,
+          cvJobseekerList
         });
       } catch (error) {
         console.error('Error fetching CVs:', error);

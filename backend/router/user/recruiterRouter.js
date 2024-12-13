@@ -9,7 +9,7 @@ recruiterRouter.route('/').get(authenticate,articleController.getArticlesByRecru
 //CRUD
 recruiterRouter.route('/create').post(authenticate,articleController.createJobApplication)
 recruiterRouter.route('/:id/update').put(authenticate,articleController.updateJobApplication)
-recruiterRouter.route(':id/delete').delete(authenticate,articleController.deleteJobApplication)
+recruiterRouter.route('/:id/delete').delete(authenticate,articleController.deleteJobApplication)
 recruiterRouter.route('/:id').get(authenticate,articleController.getDetailArticle)
 recruiterRouter.route('/:id/listCV').get(authenticate,recruiterController.getListCVFromArticle)
 recruiterRouter.route('/:articleId/listCV/:cvId').get(authenticate,recruiterController.getDetailCV)

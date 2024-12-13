@@ -50,8 +50,7 @@ const getListCVFromArticle = async (req,res,next) => {
           });
         }
         return res.status(200).json({
-          success: true,
-          cvList: cvList,
+          cvList
         });
       } catch (error) {
         console.error('Error fetching CVs:', error);
@@ -65,27 +64,31 @@ const getListCVFromArticle = async (req,res,next) => {
     try {
       const articleId = req.params?.articleId;
       const cvId = req.params?.cvId;
+      console.log("articleId", articleId);
+      console.log("cvId", cvId);
+  
+      // Kiểm tra nếu không có articleId hoặc cvId
       if (!articleId || !cvId) {
         return res.status(400).json({ error: "Missing articleId or cvId in params" });
       }
+  
+      // Truy vấn CV từ cơ sở dữ liệu
       const cvFile = await recruiterModel.getDetailCV(articleId, cvId);
       console.log(cvFile);
+  
+      // Kiểm tra nếu không tìm thấy file CV
       if (!cvFile || !cvFile.data) {
         return res.status(404).json({ error: "CV file not found" });
       }
-
+      // Chuyển dữ liệu base64 thành buffer
       const pdfBuffer = Buffer.from(cvFile.data, "base64");
-      const fileName = `${cvFile.name || "CV"}_${cvId}.pdf`;
-      const filePath = path.join("uploads", fileName);
   
-      fs.writeFileSync(filePath, pdfBuffer);
-      res.download(filePath, fileName, (err) => {
-        if (err) {
-          console.error("Error sending file:", err);
-          return res.status(500).json({ error: "Error sending file" });
-        }
-        fs.unlinkSync(filePath);
-      });
+      // Thiết lập loại nội dung là PDF
+      res.contentType("application/pdf");
+      console.log("BufferPDF",pdfBuffer);
+      // Gửi file PDF trực tiếp về trình duyệt mà không cần lưu tạm vào file hệ thống
+      res.send(pdfBuffer);
+  
     } catch (error) {
       console.error("Error in getDetailCV:", error);
       res.status(500).json({ error: error.message });
@@ -101,7 +104,7 @@ const getListCVFromArticle = async (req,res,next) => {
           message: "New status is required",
         });
       }
-      const result = await jobApplicationModel.replyCV(articleId, cvId, newStatus);
+      const result = await recruiterModel.replyCV(articleId, cvId, newStatus);
       return res.status(200).json({
         success: true,
         message: result.message,

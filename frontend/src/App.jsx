@@ -13,55 +13,43 @@ import Footer from './components/Footer';
 import ImgBg from './components/ImgBg';
 import CompDetail from './components/CompDetail';
 import Register from './components/register';
+import Candidate from './components/Candiate';
+import CreateJob from './components/CreateJob';
+import UserInfoDisplay from './components/user';
 import { UserProvider } from './userContext/userContext';
 import Profile from './components/Profile'
 import CreateJob from './components/CreateJob';
 import Candidate from './components/Candidate';
-
 
 const App = () => {
   const [isLogin, setIsLogin] = useState(false); // Quản lý trạng thái đăng nhập
   const [role, setRole] = useState('user'); // Quản lý vai trò ('user' hoặc 'recruiter')
 
   return (
-    //<UserProvider>
-    <Router>
-      <div className="bg-white">
-        {/* Hiển thị NavBar tương ứng */}
-        {role === 'user' ? (
-          <NavBar isLogin={isLogin} setIsLogin={setIsLogin} setRole={setRole} />
-        ) : (
-          <NavBar_Cruit isLogin={isLogin} setIsLogin={setIsLogin} setRole={setRole} />
-        )}
+    <UserProvider>
+      <Router>
+        <div className="bg-white">
+          <NavBar />
+          <ImgBg />
+          <Routes>
+            <Route path="/jobseeker" element={<Home />} />
+            <Route path="/jobseeker/profile" element={<Profile />} />
+            <Route path="/jobseeker/job" element={<Job />} />
+            <Route path="/jobseeker/favorite" element={<Favor />} />
+            <Route path="/jobseeker/status" element={<Status />} />
+            <Route path="/jobseeker/register" element={<Register />} />
+            <Route path="/jobseeker/jobDetail/:id" element={<CompDetail />} />
+            <Route path="/checkinfo" element={<UserInfoDisplay />} />
 
-        <ImgBg/>
-
-        <Routes>
-          {/* Trang chủ */}
-          <Route path="/" element={<Home />} />
-          {role === 'user' && (
-            <>
-            <Route path="/cv" element={<CV />} />
-            <Route path="/favorite" element={<Favor />} />
-            <Route path="/status" element={<Status />} />
-            <Route path="/profile" element={<Profile />} />
-            </>
-          )}
-          {role === 'recruiter' && (
-            <>
-            <Route path="/create" element={<CreateJob />} />
-            <Route path='/candidate' element={<Candidate />} />
-            </>
-          )}
-            
-          <Route path="/job" element={<Job />} />
-          <Route path="/companyDetail" element={<CompDetail />} />
-
-        </Routes>
-        <Footer /> {/* Footer có thể hiển thị dưới tất cả các trang */}
-      </div>
-    </Router>
-    //</UserProvider>
+            <Route path="/recruiter" element={<Home />} />
+            <Route path="/recruiter/jobDetail/:id" element={<CompDetail />} /> 
+            <Route path="/recruiter/jobDetail/:id/listJobseeker" element={<Candidate />} />
+            <Route path="/recruiter/createJob" element={<CreateJob />} /> 
+          </Routes>
+          <Footer />
+        </div>
+      </Router>
+    </UserProvider>
   );
 };
 

@@ -4,6 +4,8 @@ import { ObjectId } from "mongodb";
 const createJobApplication = async (req,res,next) => {
   try{
  const userId = req.user.id;
+ console.log("userID",userId);
+ console.log("Data",req.body);
  const newJobApplication = await articleModel.createJobApplication(userId,req.body);
  if (!newJobApplication) {
   return res.status(404).json({ message: "Article not found" });
@@ -75,9 +77,7 @@ const getArticlesByRecruiterId = async (req, res) => {
         message: 'No articles found for this recruiter.',
       });
     }
-    return res.status(200).json({
-      articles: articles,
-    });
+    return res.status(200).json(articles);
   } catch (error) {
     console.error('Error fetching articles:', error);
     return res.status(500).json({
