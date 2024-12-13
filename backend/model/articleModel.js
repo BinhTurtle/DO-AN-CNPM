@@ -7,11 +7,10 @@ const createJobApplication = async (recruiterId, data) => {
     if (!data.title || !data.salary || !data.detail) {
       throw new Error("Missing required fields");
     }
-
     // Fetch recruiter details directly within the function
     const recruiterDetails = await client
-      .db("RecruitmentArticledatabase")
-      .collection("Recruiters")
+      .db("Account")
+      .collection("Recruiter")
       .findOne({ _id: new ObjectId(recruiterId) });
 
     if (!recruiterDetails) {
@@ -21,9 +20,10 @@ const createJobApplication = async (recruiterId, data) => {
       _id: new ObjectId(),
       recruiterId: new ObjectId(recruiterId),
       title: data.title,
-      company: recruiterDetails.name,
+      company: recruiterDetails.Name,
       salary: data.salary,
-      address: recruiterDetails.address,
+      address: data.address,
+      experience: data.experience,
       detail: data.detail,
       jobseekerList: {
         quantity: 0,
@@ -36,8 +36,7 @@ const createJobApplication = async (recruiterId, data) => {
       .db("RecruitmentArticledatabase")
       .collection("Article")
       .insertOne(newArticle);
-
-    return result.ops[0];
+    return result;
   } catch (error) {
     console.error("Error creating job application:", error.message);
     throw new Error(error.message);

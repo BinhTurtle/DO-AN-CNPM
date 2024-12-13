@@ -62,6 +62,7 @@ const SingleJob = ({ id,image, title, company, salary, location }) => {
 };
 const JobHome = () => {
   const [jobs, setJobs] = useState([]); // State lưu danh sách công việc
+  const [jobfiller,setJobFiller] = useState([]);
   const [loading, setLoading] = useState(true); // State theo dõi trạng thái loading
   const [error, setError] = useState(null); // State lưu lỗi nếu có
   const [fetch, setfetch] = useState("");

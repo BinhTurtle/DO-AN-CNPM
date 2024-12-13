@@ -1,5 +1,5 @@
 // src/components/NavBar.js
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { AiOutlineBell } from 'react-icons/ai';
 import { FaUserCircle } from 'react-icons/fa';
 import { MdLogout } from 'react-icons/md';
@@ -12,6 +12,17 @@ const NavBar = () => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const { userInfo, isLoggedIn, logout } = useContext(UserContext);
   const linkPath = userInfo?.role === 'recruiter' ? '/recruiter' : '/jobseeker';
+  const [isOpen, setIsOpen] = useState(false);
+  const [notifications, setNotifications] = useState([
+    "Có một công việc mới phù hợp với bạn từ Công ty XYZ.",
+    "Bạn có một tin nhắn mới từ nhà tuyển dụng HCMUT.",
+    "Đừng quên hoàn thành hồ sơ ứng tuyển của bạn trước 13/12/2024 nhé!"
+  ]);
+
+  // Hàm xử lý khi bấm vào chuông
+  const handleBellClick = () => {
+    setIsOpen(!isOpen); // Mở/đóng danh sách thông báo
+  };
   const navigate = useNavigate();
 
   const handleAvatarClick = () => {
@@ -42,6 +53,7 @@ const NavBar = () => {
   const handleLoginRecruiter = async () => {
     window.location.href = 'http://localhost:8080/recruiter/auth/google';
   };
+
   return (
     <div className='navBar flex flex-wrap justify-between items-center p-[2rem] w-[90%] m-auto'>
       <div className="logoDiv flex items-center gap-4 w-full sm:w-auto">
@@ -63,7 +75,7 @@ const NavBar = () => {
         ) : (
           <>
             <Link to="/jobseeker" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Công việc</Link>
-            <Link to="/cv" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Hồ sơ & CV</Link>
+            {/* <Link to="/cv" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Hồ sơ & CV</Link> */}
             <Link to="/jobseeker/status" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Trạng thái</Link>
             <Link to="/jobseeker/favorite" className="menuList text-[#6f6f6f] hover:text-white hover:bg-black hover:rounded-[20px] text-[17px] text-black p-2">Yêu thích</Link>
           </>
@@ -77,9 +89,26 @@ const NavBar = () => {
           </>
         ) : (
           <>
-            <li className="menuList text-[#6f6f6f] cursor-pointer p-2">
-              <AiOutlineBell className="text-[25px]" />
-            </li>
+                         <li className="menuList text-[#6f6f6f] cursor-pointer p-2" onClick={handleBellClick}>
+                <AiOutlineBell className="text-[25px]" />
+                
+                {/* Dấu chấm đỏ nếu có thông báo */}
+                {notifications.length > 0 && (
+                  <span className="absolute top-0 right-0 bg-red-500 w-3 h-3 rounded-full"></span>
+                )}
+              </li>
+              {isOpen && notifications.length > 0 && (
+                <div className="absolute top-10 right-0 bg-white border-2 border-gray-300 rounded-[20px] p-4 shadow-lg w-[250px]">
+                  <h3 className="font-semibold text-lg">Thông báo</h3>
+                  <ul className="mt-2 text-sm">
+                    {notifications.map((notification, index) => (
+                      <li key={index} className="py-2 border-b">
+                        {notification}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             <li className="menuList text-[#6f6f6f] cursor-pointer p-2 flex items-center gap-2" onClick={handleAvatarClick}>
               <img
                 src="/logo.png"
@@ -87,7 +116,6 @@ const NavBar = () => {
                 className="w-[30px] h-[30px] rounded-full object-cover"
                 style={{ objectFit: 'cover' }}
               />
-              {!userInfo.avatar && <FaUserCircle className="text-[#6f6f6f] text-[25px]" />}
             </li>
           </>
         )}

@@ -4,6 +4,8 @@ import { ObjectId } from "mongodb";
 const createJobApplication = async (req,res,next) => {
   try{
  const userId = req.user.id;
+ console.log("userID",userId);
+ console.log("Data",req.body);
  const newJobApplication = await articleModel.createJobApplication(userId,req.body);
  if (!newJobApplication) {
   return res.status(404).json({ message: "Article not found" });

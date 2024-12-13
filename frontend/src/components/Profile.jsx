@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import UserContext from "../userContext/userContext";
+import { useNavigate } from "react-router-dom";
 const Profile = () => {
   const [profile, setProfile] = useState({});
   const [error, setError] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadError, setUploadError] = useState("");
   const [uploadSuccess, setUploadSuccess] = useState("");
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -71,7 +72,8 @@ const Profile = () => {
         ...prevProfile,
         CVProfile: prevProfile.CVProfile.filter((cv) => cv.id !== cvId),
       }));
-      setUploadSuccess("Xóa CV thành công!");
+      alert("Xóa CV thành công!");
+      navigate("/recruiter");
     } catch (error) {
       setUploadError("Có lỗi xảy ra khi xóa CV. Vui lòng thử lại.");
       console.error(error);

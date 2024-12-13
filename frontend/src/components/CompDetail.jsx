@@ -51,7 +51,7 @@ const CompDetail = () => {
           `http://localhost:8080/jobseeker/${id}`,
         );
         setJobDetail(response1.data);
-        const response2 = await axios.get("http://localhost:8080/jobseeker", {
+        const response2 = await axios.get(userInfo?.role === 'Jobseeker' ? "http://localhost:8080/jobseeker": "http://localhost:8080/recruiter",{
           withCredentials: true,
         });
         const allJobs = response2.data;
@@ -109,14 +109,20 @@ const CompDetail = () => {
     alert("Chức năng sửa sẽ được triển khai!");
   };
   
-  const handleDeleteClick = () => {
-    console.log("Xóa clicked");
+  const handleDeleteClick = async (jobId) => {
     const confirmDelete = window.confirm("Bạn có chắc muốn xóa mục này?");
+    
     if (confirmDelete) {
-      console.log("Mục đã được xóa");
-      alert("Mục đã được xóa thành công!");
-    } else {
-      console.log("Hủy xóa mục");
+      try {
+        const response = await axios.delete(`http://localhost:8080/recruiter/${jobId}/delete`, {
+          withCredentials: true,
+        });
+        
+        alert("Mục đã được xóa thành công!");
+        navigate("/recruiter");
+      } catch (error) {
+        alert("Có lỗi xảy ra, vui lòng thử lại!");
+      }
     }
   };
   
@@ -285,12 +291,9 @@ const CompDetail = () => {
       </button>
 
       {/* Nút xóa */}
-      <button
-        className="bg-red-500 text-white py-2 px-10 rounded-[20px] hover:bg-red-600"
-        onClick={handleDeleteClick}
-      >
-        Xóa
-      </button>
+      <button onClick={() => handleDeleteClick(id)} className="bg-red-500 text-white py-2 px-10 rounded-[20px] hover:bg-red-600">
+  Xóa
+</button>
 
       {/* Nút danh sách ứng viên */}
       <button
@@ -393,8 +396,7 @@ const CompDetail = () => {
           </div>
         </div>
         </div>
-      </div>
-
+        {(userInfo?.role === 'Jobseeker'||'Recruiter') ? (
       <div className="relative p-6 bg-white border border-black rounded-[20px] shadow-md text-center h-fit w-[400px]">
         {/* Nút báo cáo */}
         <button
@@ -521,6 +523,9 @@ const CompDetail = () => {
           </div>
         )}
       </div>
+      ): null }
+      </div>
+
     </div>
   );
 };
